@@ -1,0 +1,3 @@
+load("/Users/as82986/BART/bartpkg1/size=10_type=0.RData")
+load("/Users/as82986/BART/bartpkg1/3Jan.RData")
+load("/Users/as82986/BART/bartpkg1/6Jan.RData")
