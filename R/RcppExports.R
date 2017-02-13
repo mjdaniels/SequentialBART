@@ -9,3 +9,11 @@ cpp_bart_y <- function(new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, ne
     .Call('bartpkg1_cpp_bart_y', PACKAGE = 'bartpkg1', new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, new_kfac, new_nmissing, new_xmissroot, new_bistart, new_vartyperoot, new_zroot, new_ffname, new_lambda, new_type)
 }
 
+#' Multiply a number by one
+#' @param x A single integer.
+#' @export
+#'
+cpp_bart <- function(new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, new_kfac, new_nmissing, new_xmissroot, new_bistart, new_vartyperoot, new_zroot, new_ffname, new_lambda, new_type) {
+    .Call('bartpkg1_cpp_bart', PACKAGE = 'bartpkg1', new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, new_kfac, new_nmissing, new_xmissroot, new_bistart, new_vartyperoot, new_zroot, new_ffname, new_lambda, new_type)
+}
+
