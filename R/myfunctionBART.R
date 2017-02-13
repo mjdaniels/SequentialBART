@@ -23,7 +23,7 @@
 #' @useDynLib bartpkg1
 #' @importFrom Rcpp sourceCpp
 #'
-serBARTfunc3Jan<- function(cstem,xx,yy,datatype,type,
+serBARTfunc12Feb<- function(cstem,xx,yy,datatype,type,
                             numskip=199,burn=1000,
                             m=200,sigdf=3, sigquant=.90,
                             kfac=2.0)
