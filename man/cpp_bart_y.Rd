@@ -2,16 +2,16 @@
 % Please edit documentation in R/RcppExports.R
 \name{cpp_bart_y}
 \alias{cpp_bart_y}
-\title{Multiply a number by two}
+\title{Multiply a number by one}
 \usage{
 cpp_bart_y(new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, new_kfac,
   new_nmissing, new_xmissroot, new_bistart, new_vartyperoot, new_zroot,
   new_ffname, new_lambda, new_type)
 }
 \arguments{
-\item{x}{A single integer.}
+\item{x}{one single integer.}
 }
 \description{
-Multiply a number by two
+Multiply a number by one
 }
 

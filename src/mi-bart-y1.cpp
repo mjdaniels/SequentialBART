@@ -6,6 +6,8 @@ using namespace Rcpp;
 #include <vector>
 #include <ctime>
 #include <cmath>
+#include "Eigen/Dense"
+#include "Eigen/Cholesky"
 
 #include "rng.h"
 #include "tree.h"
@@ -15,28 +17,43 @@ using namespace Rcpp;
 
 using std::cout;
 using std::endl;
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
+using Eigen::Map;
+using namespace Eigen;
 
-//void xitofile(std::ofstream& fnm, xinfo xi)
-//{
-//  fnm << xi.size() << endl;
-//  for(uint i=0;i< xi.size();i++)
-//    {
-//      fnm << xi[i].size() << endl;
-//      for(uint j=0;j<xi[i].size();j++) fnm << xi[i][j] << "  ";
-//      fnm << endl;
-//    }
-//  fnm << endl;
-//}
+// void xitofile(std::ofstream& fnm, xinfo xi)
+// {
+//   fnm << xi.size() << endl;
+//   for(uint i=0;i< xi.size();i++)
+//     {
+//       fnm << xi[i].size() << endl;
+//       for(uint j=0;j<xi[i].size();j++) fnm << xi[i][j] << "  ";
+//       fnm << endl;
+//     }
+//   fnm << endl;
+// }
 
-size_t m;
-double kfac=2.0;
-std::vector<double> x,y;
-std::vector<double> z;
-size_t n,p;
-double nu;
-double lambda;
-int bistart=0;
-int binum=0;
+// size_t m;
+// double kfac=2.0;
+// std::vector<double> x,y;
+// std::vector<double> z;
+// size_t n,p;
+// double nu;
+// double lambda;
+// int bistart=0;
+// int binum=0;
+
+static size_t m;
+static double kfac=2.0;
+static std::vector<double> x,y;
+static std::vector<double> z;
+static size_t n,p;
+static double nu;
+static double lambda;
+static int bistart=0;
+static int binum=0;
+
 
 class init {
 public:
@@ -56,7 +73,7 @@ public:
 // function to get initial data
 //-----------------------------------------
 
-void  init_input(size_t index, init& ip_initial, int* vartype)
+static void  init_input(size_t index, init& ip_initial, int* vartype)
   {
     std::vector<tree> t(m);
     ip_initial.t=t;
@@ -202,7 +219,7 @@ cout<<ip_initial.di.x[0]<<endl;
 // function to get each mcmc run
 //--------------------------------
 
-void mcmc(init& ip_initial, RNG gen,int* vartype)
+static void mcmc(init& ip_initial, RNG gen,int* vartype)
 {
   //draw trees
 
@@ -265,34 +282,53 @@ void mcmc(init& ip_initial, RNG gen,int* vartype)
   return;
 }
 
+// change 1: function to calcualte logposterior
+
+ double logit_logpost(MatrixXd Y, MatrixXd X, MatrixXd beta)
+{
+  // likelihood
+  VectorXd eta = X * beta;
+  // MatrixXd p = 1.0 / (1.0 + exp(-eta));
+  double loglike = 0.0;
+
+  for (unsigned int i = 0; i < Y.rows(); ++ i)
+    loglike += -Y(i) * log(1.0+exp(-eta(i))) - (1 - Y(i)) * log(1.0+exp(eta(i)));
+
+
+  return (loglike );
+}
+
 //--------------------------------
 // main program
 //--------------------------------
+//cpp_bart_y1(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),beta,t(V),ffname,lambda, type)
 
-//' Multiply a number by zero
-//' @param x zero single integer.
+//' Multiply a number by two
+//' @param x many single integers.
 //' @export
 //'
 // [[Rcpp::export]]
 
-int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn,
-              int new_m, int new_nu, int new_kfac, int  new_nmissing,
-              IntegerVector new_xmissroot, int new_bistart, NumericVector new_vartyperoot,
-              NumericVector new_zroot, CharacterVector new_ffname, NumericVector new_lambda, int new_type)
+int cpp_bart_y1 (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn,
+                 int new_m, int new_nu, int new_kfac, int  new_nmissing,
+                 IntegerVector new_xmissroot, int new_bistart, NumericVector new_vartyperoot,
+                 NumericVector new_zroot, NumericVector new_beta, NumericVector new_vroot,CharacterVector new_ffname, NumericVector new_lambda, int new_type)
 {
+   //random number generation
+  uint seed=99;
+  RNG gen(seed); //this one random number generator is used in all draws
 
-    uint seed=99; //random number generation
-    RNG gen(seed); //this one random number generator is used in all draws
+  //read in data
+  y = Rcpp::as< std::vector<double> >(new_yroot);
 
-    //read y
-    y = Rcpp::as< std::vector<double> >(new_yroot);
 
-    n = y.size();
+  n = y.size();
   if(n<1)
     {
       cout << "error n<1\n";
       return 1;
     }
+  cout<< "Y included. logistic regression. Diffuse prior."<<endl;
   cout << "\ny read in:\n";
   cout << "n: " << n << endl;
   cout << "y first and last:\n";
@@ -313,88 +349,55 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
   cout << "last row: " << x[(n-1)*p] << " ...  " << x[n*p-1] << endl;
 
 
-   //optionally read in additional arguments
-//  size_t burn = 100; //number of mcmc iterations called burn-in
-//  size_t nd = 1000; //number of mcmc iterations
-//  m=200; //number of trees in BART sum
-//   lambda = 1.0; //this one really needs to be set
-//  nu = 3.0;
-//  size_t nvar=0; // # of covariates with missing values
-//  if(argc>4) nd = atoi(argv[4]);
-//  if(argc>5) lambda = atof(argv[5]);
-//  if(argc>6) burn = atoi(argv[6]);
-//  if(argc>7) m = atoi(argv[7]);
-//  if(argc>8) nu = atof(argv[8]);
-//  if(argc>9) kfac = atof(argv[9]);
-//  if(argc>10) nvar=atoi(argv[10]);
+
+  m=200; //number of trees in BART sum
+   lambda = 1.0; //this one really needs to be set
+  nu = 3.0;
 
 
+  size_t nvar = new_nmissing; // # of covariates with missing values
+  size_t nd = new_nd; // int atoi (const char * str);
+  size_t burn  = new_burn;
+  m = new_m;
+  kfac = new_kfac;
+  nu = new_nu;
 
-    size_t nvar = new_nmissing; // # of covariates with missing values
-    size_t nd = new_nd; // int atoi (const char * str);
-    size_t burn  = new_burn;
-
-    m = new_m;
-    kfac = new_kfac;
-    nu = new_nu;
-
-    binum = 0;
+  //if(argc>5) lambda = atof(argv[5]);
 
 
-//      std::ifstream mindf(argv[11]);  //file to read missing indicator from
-//      std::vector<int> ind_missing;
-//      int mtemp;
-//      while(mindf>> mtemp)  ind_missing.push_back(mtemp);
-    std::vector<int> ind_missing = Rcpp::as< std::vector<int> >(new_xmissroot);  //file to read missing indicator from
+  std::vector<int> ind_missing = Rcpp::as< std::vector<int> >(new_xmissroot);  //file to read missing indicator from
+
 
   cout <<"\nburn,nd,number of trees: " << burn << ", " << nd << ", " << m << endl;
   cout <<"\nlambda,nu,kfac: " << lambda << ", " << nu << ", " << kfac << endl;
   cout <<"\nnvar:" << nvar<<endl;
 
-//   bistart = atoi(argv[12]);
+  bistart = new_bistart;
 
-    bistart = new_bistart;
 
-    std::vector<int> vart2 = Rcpp::as< std::vector<int> >(new_vartyperoot);  //file to read variable type from
+  std::vector<int> vart2 = Rcpp::as< std::vector<int> >(new_vartyperoot);  //file to read variable type from
 
-    int* vartype=new int[p+1];
-    int jj=0;
-    for (std::vector<int>::const_iterator i = vart2.begin(); i != vart2.end(); ++i)
-    { vartype[jj]=*i;
-        if(jj>=bistart){
-            if(*i==1){binum++;}
-        }
-        jj++;
+  int* vartype=new int[p+1];
+
+  int jj=0;
+  //while loop from the original code was repalced by for loop here
+  for (std::vector<int>::const_iterator i = vart2.begin(); i != vart2.end(); ++i)
+  { vartype[jj]=*i;
+    if(jj>=bistart){
+      if(*i==1){binum++;}
     }
+    jj++;
+  }
 
-   //  jj=0;
-   //  while(vartype[jj]==0) {bistart++;jj++;}
+  z = Rcpp::as< std::vector<double> >(new_zroot);
 
-//   std::ifstream bi(argv[14]);
-// double bitemp;
-// jj=0;
-// while(bi>>bitemp)
-//   {z.push_back(bitemp);
-//     //   cout<<"z["<<jj<<"]"<<bitemp<<endl;
-//     jj++;
-//   }
-   z = Rcpp::as< std::vector<double> >(new_zroot);
+  std::string new_ffname_conv = Rcpp::as<std::string>(new_ffname);
+  std::string filename="";
+  filename.append(new_ffname_conv);
 
-    std::string new_ffname_conv = Rcpp::as<std::string>(new_ffname);
-    std::string filename="";
-    filename.append(new_ffname_conv);
-
- // cout<<filename;
-
- // std::string filename(argv[15]);
- //  std::getline(std::cin, filename);
-    // open file,
-    // and define the openmode to output and truncate file if it exists before
-
-    init *all_initial = new init[nvar+1]; //right
+  init *all_initial = new init[nvar+1]; //right
 
 
-//init all_initial[nvar+1];
    for(size_t i=0;i<nvar+1;i++)
     {
       all_initial[i].ftemp=new double [n];
@@ -417,11 +420,12 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
 
    //storage for ouput
    //missing value
- // std::ofstream mif("mif.txt");//file to save imputed missing value
-  std::ofstream mif(filename.c_str());
-//std::ofstream accpt("accpt.txt");//file to save imputed missing value
-  //std::ofstream bsdf("/home/dandan/Downloads/test/bart-sd.txt"); //note that we write all burn+nd draws to this file.
-
+    std::ofstream mif(filename.c_str());
+ //std::ofstream mif("mif.txt");
+  //file to save imputed missing value
+  // std::ofstream accpt("/home/dandan/Downloads/test/accpt.txt");//file to save imputed missing value
+  // std::ofstream bsdf("/home/dandan/Downloads/test/bart-sd.txt"); //note that we write all burn+nd draws to this file.
+  // std::ofstream mbeta("/home/dandan/Downloads/test/mbeta.txt");
    // //mcmc
   double pro_prop=0.0; //proposal probability of MH min(1,alpha)
   double pro_propnum=1.0;//numerator of proposal prob
@@ -431,27 +435,110 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
   double* ppredmean=new double[p];
   double* fpredtemp=new double[1];
 
+  // new change1  4/21/2015
+  MatrixXd xx(n,p+1);
+  VectorXd x1=VectorXd::Constant(n,1);
+
+  Map<Eigen::Matrix<double,Dynamic,Dynamic,RowMajor> > yy(y.data(),n,1);
+
+  double* meantemp1=new double[1];
+  double* meantemp2=new double[1];
+  Map<Eigen::Matrix<double,1,1> > meantemp11(meantemp1);
+  Map<Eigen::Matrix<double,1,1> > meantemp21(meantemp2);
+  VectorXd xxtemp(p+1);
+  std::vector<double> rnor;
+  for(size_t i=0;i<=p;i++) rnor.push_back(0.0);
+  Map<Eigen::Matrix<double,Dynamic,Dynamic,RowMajor> > rbeta(rnor.data(),p+1,1);
+
+  Map<Eigen::Matrix<double,Dynamic,Dynamic,RowMajor> > xx1(all_initial[0].di.x,n,p);
+    xx<<x1,xx1;
+
+    MatrixXd propC(p+1,p+1);
+    double logpost_cur;
+    VectorXd beta_can(p+1);
+    double logpost_can;
+    double ratio;
+
+    std::vector<double> ibeta = Rcpp::as< std::vector<double> >(new_beta);  //file to read missing indicator from
+    std::vector<double> ipropV = Rcpp::as< std::vector<double> >(new_vroot);  //file to read missing indicator from
+
+
+ //    double betatemp,vtemp;
+ //    std::vector<double> ipropV,ibeta;
+ //
+ // std::ifstream betaf(argv[15]); //file to read y from
+ //  while(betaf >> betatemp)
+ //    {
+ //      ibeta.push_back(betatemp);
+ //    }
+ //
+ // std::ifstream vf(argv[16]); //file to read y from
+ //  while(vf >> vtemp)
+ //    {
+ //      ipropV.push_back(vtemp);
+ //    }
+
+  Map<Eigen::Matrix<double,Dynamic,Dynamic,RowMajor> > beta(ibeta.data(),p+1,1);
+  Map<Eigen::Matrix<double,Dynamic,Dynamic,RowMajor> > propV(ipropV.data(),p+1,p+1);
+  propC=(propV.llt().matrixL());
+
+
+    //  cout<<"xx="<<xx<<endl;
+    //beta=(xx.transpose()*xx).inverse()*xx.transpose()*yy;
+
+  // cout<<"beta"<<beta<<endl;
+  // cout<<"V"<<propV<<endl;
+    //end change 1
+
 
   //  double temp_a;
   di_temp.n=1;di_temp.y=0;
   std::vector<double> tempx;
   for(size_t i=0;i<=p;i++) tempx.push_back(0.0);
-  size_t l=0;
-  cout << "\nMCMC:\n";
+  Map<Eigen::Matrix<double,Dynamic,Dynamic,RowMajor> > xxtemp1(tempx.data(),p,1);
+  xxtemp<<1,xxtemp1;
+  cout << "\nMCMC:\n"<<endl;
+  //cout << "xxtemp1="<<xxtemp1<<endl;
+  // cout <<"xxtemp="<<xxtemp<<endl;
   clock_t tp;
   tp = clock();
+  size_t l=0;
   for(size_t i=0;i<(nd+burn);i++)
     {
       if(i%100==0) cout << "i: " << i << endl;
+      // if(i%100==0) cout<<"beta"<<beta<<endl;
 
       // mcmc used to get updated parameters
-      for(size_t j=0;j<nvar+1;j++)
-      	{ lambda = (new_lambda[j]);
+      for(size_t j=1;j<nvar+1;j++)
+      	{ lambda= (new_lambda[j]);
 	  // cout<<"lamda"<<lambda<<endl;
       	  mcmc(all_initial[j], gen,vartype);
 	  // cout<<"a"<<all_initial[j].y[1]<<"b"<<all_initial[j].allfit[1]<<"C"<<all_initial[j].pi.sigma<<endl;
-	  // bsdf <<all_initial[j].pi.sigma << endl;
+	  //  bsdf <<all_initial[j].pi.sigma << endl;
       	}
+
+      //new change2 -- posterior of beta
+        xx<<x1,xx1;
+        //  cout<<"i"<<i<<endl;
+
+
+      for(size_t j=0;j<30;j++)
+  	{
+
+  logpost_cur = logit_logpost(yy, xx, beta);
+  // cout<<"logpost_cur"<<logpost_cur<<endl;
+  gen.normal(rnor,0,1);
+  beta_can =beta+ propC*rbeta;
+
+    logpost_can = logit_logpost(yy, xx, beta_can);
+    ratio = exp(logpost_can - logpost_cur);
+
+    if (gen.uniform() < ratio) {
+      beta = beta_can;
+    }
+	}
+      // mbeta<<beta<<endl;
+	//end change2
 
       // all_initial[0].t[0].pr();
       //  prxi(all_initial[0].xi);
@@ -463,7 +550,7 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
   	{
   	  //the row of x used to get prediction
 
-  	  for(size_t k=0;k<=nvar;k++)
+  	  for(size_t k=1;k<=nvar;k++) //change3
   	    {
   	      if(ind_missing[j*(nvar+1)+k]==1)
   		{
@@ -496,8 +583,26 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
 		       //cout<<"ppppppp"<<pro_propnum<<"ppppppp"<<pro_propdenom<<endl;
 
 		    }
-		  tempx[p-k]=prop;//change the element to proposal
-		  l=0;
+		  // change 4
+
+		  // cout << "xxtemp1="<<xxtemp1<<endl;
+ xxtemp<<1,xxtemp1;
+ // cout <<"xxtemp="<<xxtemp<<endl;
+		    meantemp11=(xxtemp.transpose()*beta);
+		    //  cout<<"meantemp11="<<meantemp11<<endl;
+		    // cout<<"beta="<<beta<<endl;
+		    // cout<<"meantemp1="<<meantemp1[0]<<endl;
+		    pro_propdenom=pro_propdenom*exp(all_initial[0].y[j]*log(1.0 / (1.0 + exp(-meantemp1[0])))+(1.0-all_initial[0].y[j])*log(1.0 / (1.0 + exp(meantemp1[0]))));
+
+	  tempx[p-k]=prop;//change the element to proposal
+           xxtemp<<1,xxtemp1;
+          meantemp21=(xxtemp.transpose()*beta);
+	  // cout << "xxtemp1="<<xxtemp1<<endl;
+ // cout <<"xxtemp="<<xxtemp<<endl;
+ // cout<<"meantemp2="<<meantemp2[0]<<endl;
+ pro_propnum=pro_propnum*exp(all_initial[0].y[j]*log(1.0 / (1.0 + exp(-meantemp2[0])))+(1.0-all_initial[0].y[j])*log(1.0 / (1.0 + exp(meantemp2[0]))));
+
+		  l=1; //change 5
   		  while(l<k)
   		    { if(vartype[p-l]==0){
   		      pro_propdenom=pro_propdenom*pn(all_initial[l].y[j],all_initial[l].allfit[j],pow(all_initial[l].pi.sigma,2));
@@ -506,6 +611,7 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
 			// temp_a=phi(-all_initial[l].allfit[j]);
 			//   cout<<"phi"<<temp_a;
                         }
+
 
 		      // cout<<"a"<<all_initial[l].y[j]<<"b"<<all_initial[l].allfit[j]<<"C"<<all_initial[l].pi.sigma<<endl;
 
@@ -525,6 +631,8 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
 		      l++;
 		      // cout<<"denom"<<pro_propdenom<<"num"<<pro_propnum;
 		    }
+
+
                   if(vartype[p-k]==0){
   		  pro_prop=std::min(1.0,pro_propnum/pro_propdenom);
 		  }else{pro_prop=pro_propnum/(pro_propnum+pro_propdenom);
@@ -564,7 +672,7 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
 		       mif<<prop<<endl;
 
 		       // cout<<"mif="<<prop<<endl;
-		       //  accpt<<1<<endl;
+		       //   accpt<<1<<endl;
 
   		    }
   		  else
@@ -577,7 +685,7 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
 			//	cout<<"mif2="<<all_initial[k].z[j]<<endl;
 		      }
 
-		      //  accpt<<0<<endl;
+		      // accpt<<0<<endl;
   		    }
   		}
 	      //  cout<<"jj="<<jj<<endl;
@@ -588,7 +696,7 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
   tp=clock()-tp;
   double thetime = (double)(tp)/(double)(CLOCKS_PER_SEC);
   cout << "time for loop: " << thetime << endl;
-    cout << "you had type =" << new_type<< endl;
-    cout << "15Jandone"<<endl;
+  cout << "you had type =" << new_type<< endl;
+  cout << "14Febdone"<<endl;
    return 0;
 }

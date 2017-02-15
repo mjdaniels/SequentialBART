@@ -23,7 +23,7 @@
 #' @useDynLib bartpkg1
 #' @importFrom Rcpp sourceCpp
 #'
-serBARTfunc12Feb<- function(cstem,xx,yy,datatype,type,
+serBARTfunc26Jan<- function(cstem,xx,yy,datatype,type,
                             numskip=199,burn=1000,
                             m=200,sigdf=3, sigquant=.90,
                             kfac=2.0)
@@ -135,7 +135,7 @@ thisis_y0<<-y0
   nd<-numimpute*numskip
 
   ##### run BART
-  #cat("BURN" ,burn)
+  cat("BURN" ,burn)
   parfit =serBart(cstem,x=X,y,burn=burn,
                   nd=nd,nmissing=nvar-1,xmiss=xmiss,
                   sigest=sighat,vartype=vartype,z=z,
@@ -178,6 +178,12 @@ thisis_y0<<-y0
   ImputedValuesSet1 <- NULL
 
   ImputedValuesSet1 <<- imputed1
+  ImputedValuesSet2 <<- imputed2
+  ImputedValuesSet3 <<- imputed3
+  ImputedValuesSet4 <<- imputed4
+  ImputedValuesSet5 <<- imputed5
+
+
   #write(imputed1, file = "imputed1file.txt", ncolumns = 4)
   #print("You have reached the end of the function BART")
   # myanswer2 <-list(imputed1 <- imputed1, imputed2 <- imputed2, imputed3 <-imputed3,
@@ -189,11 +195,11 @@ thisis_y0<<-y0
 serBart=function(cstem,x,y,nd=1000,burn=500,m=200,sigest=NA, sigdf=3, sigquant=.90,kfac=2.0,
                  fname="",nmissing=0,xmiss=NULL,vartype,z,bistart,binum,type=0,beta=NULL,V=NULL)
 {
-    cat("***** Running serBart\n")
+    cat("***** iiiRunning serBart\n\n")
     # print(vartype)
 
     p=ncol(x)
-    #cat( "Value of p is : ", p)
+    cat( "Value of p is : ", p)
     x_has_values <<- x
     xroot=paste(cstem,fname,"x1.txt",sep="")
     # write(x,file="/Users/as82986/Desktop/x_nocol1.txt")
@@ -202,24 +208,21 @@ serBart=function(cstem,x,y,nd=1000,burn=500,m=200,sigest=NA, sigdf=3, sigquant=.
     write(t(x),file=xroot,ncolumns=p)
 
     yroot=paste(cstem,fname,"y1.txt",sep="")
-   # print( "y is sent without beinng transposed")
+    print( "y is sent NOT transposed")
     write(y,file=yroot,ncolumns=1)
 
 
     xmissroot=paste(cstem,fname,"xmiss1.txt",sep="")
-   # print( "xmiss is sent as transposed")
+    print( "xmiss is sent as transposed")
     write(t(xmiss),file=xmissroot,ncolumns=nmissing+1)
 
     vartyperoot=paste(cstem,fname,"vartype1.txt",sep="")
-  #  print( "vartype is sent as transposed")
+    print( "vartype is sent as transposed")
     write(t(vartype),file=vartyperoot,ncolumns=p+1)
 
 
-    #vroot=paste(cstem,fname,"z.txt",sep="") # fix this####################
-    #write(t(V),file=vroot,ncolumns=p+1) #
-
     zroot=paste(cstem,fname,"z1.txt",sep="")
-   #  print( "z is sent as transposed")
+     print( "z is sent as transposed")
     if(binum==0){
       write(t(z),file=zroot,ncolumns=1)
     }
@@ -228,7 +231,7 @@ serBart=function(cstem,x,y,nd=1000,burn=500,m=200,sigest=NA, sigdf=3, sigquant=.
       }
     #--------------------------------------------------
 
-     ffname=paste(cstem,fname,"mif.txt",sep="")# fix this####################
+     ffname=paste(cstem,fname,"mif_monday.txt",sep="")# fix this####################
 
     nu=sigdf
     sigq=qchisq(1.0-sigquant,nu)
@@ -299,27 +302,26 @@ serBart=function(cstem,x,y,nd=1000,burn=500,m=200,sigest=NA, sigdf=3, sigquant=.
     {
       ans <- cpp_bart(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),ffname,lambda, type)
      #ans <- cpp_bart(x,y,nd,burn,m,nu,kfac,nmissing,xmiss,bistart,vartype,z,ffname,lambda)
-     print( " I never came here") }
+     print( " I am in type=0") }
     else if(type==1)
     { ans <- cpp_bart_y(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),ffname,lambda, type)
       #ans <- cpp_bart_y(x,y,nd,burn,m,nu,kfac,nmissing,xmiss,bistart,vartype,z,ffname,lambda)
-     #print ("I am herer")
-     }
+     print ("I am in type=1") }
     else if(type==2)
       {
       print( " I never came here2")
-        #betaroot=paste(cstem,fname,"beta.txt",sep="") # fix this####################
-        #write(beta,file=betaroot,ncolumns=1) # fix this####################
-        #vroot=paste(cstem,fname,"z.txt",sep="") # fix this####################
-        #write(t(V),file=vroot,ncolumns=p+1) # fix this####################
-        ans <- cpp_bart_y1(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),beta,t(V),ffname,lambda)
+        betaroot=paste(cstem,fname,"beta.txt",sep="") # fix this####################
+        write(beta,file=betaroot,ncolumns=1) # fix this####################
+        vroot=paste(cstem,fname,"v.txt",sep="") # fix this####################
+        write(t(V),file=vroot,ncolumns=p+1) # fix this####################
+        ans <- cpp_bart_y1(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),beta,t(V),ffname,lambda, type)
       }
     # for (i in 1:(nmissing+1)){
     #   cmd<-paste(cmd,lambda[i])
     # }
     # ans <- cpp_bart_y(x,y,nd,burn,m,nu,kfac,nmissing,xmiss,bistart,vartype,z,ffname,lambda)
-    #print("mif.txt was created by cpp")
-    mifthis = scan(paste(cstem,fname,"mif.txt",sep=""))
+    print("mif.txt was created by cpp")
+    mifthis = scan(paste(cstem,fname,"mif_monday.txt",sep=""))
     retlist <- list(mif=mifthis)
     return(retlist)
     #KK<- ans

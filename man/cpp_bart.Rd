@@ -2,16 +2,16 @@
 % Please edit documentation in R/RcppExports.R
 \name{cpp_bart}
 \alias{cpp_bart}
-\title{Multiply a number by one}
+\title{Multiply a number by zero}
 \usage{
 cpp_bart(new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, new_kfac,
   new_nmissing, new_xmissroot, new_bistart, new_vartyperoot, new_zroot,
   new_ffname, new_lambda, new_type)
 }
 \arguments{
-\item{x}{A single integer.}
+\item{x}{zero single integer.}
 }
 \description{
-Multiply a number by one
+Multiply a number by zero
 }
 

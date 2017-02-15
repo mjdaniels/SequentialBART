@@ -2,7 +2,8 @@
 
 export(cpp_bart)
 export(cpp_bart_y)
-export(serBARTfunc12Feb)
+export(cpp_bart_y1)
+export(serBARTfunc26Jan)
 importFrom(LaplacesDemon,rbern)
 importFrom(Rcpp,sourceCpp)
 importFrom(msm,rtnorm)
