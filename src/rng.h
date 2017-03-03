@@ -113,7 +113,7 @@ class RNG
      zigset(); }
   ~RNG() { }
 
- //   int countr = 0;
+    //int countr = 0;
 
 #if ULONG_MAX == 4294967295ul
   // 32 bit unsigned longs

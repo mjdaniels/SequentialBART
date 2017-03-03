@@ -1,6 +1,7 @@
 #ifndef GUARD_info_h
 #define GUARD_info_h
 
+#include "stdlib.h"
 //data
 //CHANGE!!!
 class dinfo {

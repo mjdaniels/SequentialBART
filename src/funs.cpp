@@ -5,6 +5,8 @@
 #include "mpi.h"
 #endif
 
+
+int funs_flag =0;
 //--------------------------------------------------
 // normal density N(x, mean, variance)
 double pn(double x, double m, double v)
@@ -56,7 +58,7 @@ void grm(tree& tr, xinfo& xi, std::ostream& os)
 {
    size_t p = xi.size();
    if(p!=2) {
-      cout << "error in grm, p !=2\n";
+      //cout << "error in grm, p !=2\n";
       return;
    }
    size_t n1 = xi[0].size();
@@ -283,22 +285,36 @@ void getsuff(tree& x, tree::tree_cp nl, tree::tree_cp nr, xinfo& xi, dinfo& di, 
    sl.n=0;sl.sy=0.0;sl.sy2=0.0;
    sr.n=0;sr.sy=0.0;sr.sy2=0.0;
 
+   // if (funs_flag==94)
+   //   {for(size_t i=0;i<di.n;i++)
+   //     {cout << "inside getsuff value of y is ="<< di.y[i]<< endl;
+   //     }
+   //   }
+
    for(size_t i=0;i<di.n;i++) {
-      xx = di.x + i*di.p;
-      tree::tree_cp bn = x.bn(xx,xi);
-      if(bn==nl) {
-         y = di.y[i];
-         sl.n++;
-         sl.sy += y;
-         sl.sy2 += y*y;
-      }
-      if(bn==nr) {
-         y = di.y[i];
-         sr.n++;
-         sr.sy += y;
-         sr.sy2 += y*y;
-      }
+     xx = di.x + i*di.p;
+     //cout << "i is ="<< i<< " ";
+     tree::tree_cp bn = x.bn(xx,xi);
+     if(bn==nl) {
+       y = di.y[i];
+       //cout << "y is ="<< di.y[i]<< " ";
+       sl.n++;
+       sl.sy += y;
+       sl.sy2 += y*y;
+       //if (funs_flag==94) cout <<" nl=  y is = " << sl.sy<<"y square is = "<< sl.sy2<<endl;
+       //cout <<"yes"<<endl;
+     }
+     if(bn==nr) {
+       y = di.y[i];
+       //cout << "y is =  ="<< di.y[i]<< " ";
+       sr.n++;
+       sr.sy += y;
+       sr.sy2 += y*y;
+       //if (funs_flag==94) cout <<" nr=  y is = " << sl.sy<<"y square is = "<< sl.sy2<<endl;
+       // cout <<" no"<<endl;
+     }
    }
+   funs_flag++;
 }
 #ifdef MPIBART
 //MPI version of get sufficient stats - this is the master code
@@ -566,6 +582,7 @@ void fit(tree& t, xinfo& xi, dinfo& di, std::vector<double>& fv)
    fv.resize(di.n);
    for(size_t i=0;i<di.n;i++) {
       xx = di.x + i*di.p;
+      //  cout <<" xx is = " <<xx;
       bn = t.bn(xx,xi);
       fv[i] = bn->getm();
    }
@@ -578,7 +595,7 @@ void fit(tree& t, xinfo& xi, dinfo& di, double* fv)
    tree::tree_cp bn;  double temp;
    for(size_t i=0;i<di.n;i++) {
 
-                                   xx = di.x + i*di.p;
+                              xx = di.x + i*di.p;
                               bn = t.bn(xx,xi);
                               temp = bn->getm();
 
@@ -620,11 +637,11 @@ void drmu(tree& t, xinfo& xi, dinfo& di, pinfo& pi, RNG & gen)
       else
         {ybar = sv[i].sy/sv[i].n;}
       double normalvalue = gen.normal();
-      double harish = b*ybar/(a+b) + normalvalue/sqrt(a+b);
+      double val = b*ybar/(a+b) + normalvalue/sqrt(a+b);
       if (f ==0){
-        //cout << "harish is " << harish << " gen.normal = " << normalvalue<< " b = "<< b << " ybar = " << ybar << " a = " << a  <<endl;
+        //cout << "val is " << val << " gen.normal = " << normalvalue<< " b = "<< b << " ybar = " << ybar << " a = " << a  <<endl;
         f++;}
-      bnv[i]->setm(harish);
+      bnv[i]->setm(val);
    }
 }
 
@@ -692,12 +709,12 @@ void MPImasterdrmu(tree& t, xinfo& xi, pinfo& pi, RNG* gen, size_t numslaves)
 //write cutpoint information to screen
 void prxi(xinfo& xi)
 {
-   cout << "xinfo: \n";
+  // cout << "xinfo: \n";
    for(size_t v=0;v!=xi.size();v++) {
-      cout << "v: " << v << endl;
-      for(size_t j=0;j!=xi[v].size();j++) cout << "j,xi[v][j]: " << j << ", " << xi[v][j] << endl;
+     // cout << "v: " << v << endl;
+     // for(size_t j=0;j!=xi[v].size();j++) cout << "j,xi[v][j]: " << j << ", " << xi[v][j] << endl;
    }
-   cout << "\n\n";
+  // cout << "\n\n";
 }
 //--------------------------------------------------
 //make xinfo = cutpoints
@@ -722,12 +739,18 @@ void makexinfo(size_t p, size_t n, double *x, xinfo& xi, size_t nc,int *vartype)
    //make grid of nc cutpoints between min and max for each x.
    xi.resize(p);
    for(size_t i=0;i<p;i++) {
-     if(vartype[i]==0){
-      xinc = (maxx[i]-minx[i])/(nc+1.0);
-      xi[i].resize(nc);
-      for(size_t j=0;j<nc;j++) xi[i][j] = minx[i] + (j+1)*xinc;
-     } else {xi[i].resize(1.0);
-             xi[i][0]=0.5;}
+     if(vartype[i]==0)
+       {
+        xinc = (maxx[i]-minx[i])/(nc+1.0);
+        xi[i].resize(nc);
+        for(size_t j=0;j<nc;j++)
+          xi[i][j] = minx[i] + (j+1)*xinc;
+       }
+     else
+       {
+       xi[i].resize(1.0);
+       xi[i][0]=0.5;
+       }
    }
 }
 // get min/max needed to make cutpoints

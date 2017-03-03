@@ -4,8 +4,8 @@
 #include "tree.h"
 
 using std::string;
-using std::cout;
-using std::endl;
+// using std::cout;
+ using std::endl;
 
 //--------------------------------------------------
 // constructors
@@ -27,7 +27,7 @@ tree& tree::operator=(const tree& rhs)
 // find bottom node pointer given x
 //--------------------
 tree::tree_cp tree::bn(double *x,xinfo& xi)
-{
+{ // cout << " v = " << v << " c = " << c<< " x[v] = "<<x[v] << " xi[v][c] = "<< xi[v][c] << endl;
    if(l==0) return this; //bottom node
    if(x[v] < xi[v][c]) {
       return l->bn(x,xi);
@@ -39,19 +39,19 @@ tree::tree_cp tree::bn(double *x,xinfo& xi)
 //find region for a given variable
 //CHANGE!!!
 void tree::rg(size_t v, int* L, int* U,int* vartype)
-{ 
+{
    if(p==0)  { //no parent
       return;
    }
    if(p->v == v) { //does my parent use v?
      if(vartype[v]==0){
       if(this == p->l) { //am I left or right child
-         if((int)(p->c) <= (*U)) *U = (p->c)-1; 
+         if((int)(p->c) <= (*U)) *U = (p->c)-1;
       } else {
-         if((int)(p->c) >= *L) *L = (p->c)+1; 
+         if((int)(p->c) >= *L) *L = (p->c)+1;
       }
      } else {*U=0; *L=1;}
-   } 
+   }
    p->rg(v,L,U,vartype);
 }
 //--------------------
@@ -66,7 +66,7 @@ size_t tree::nnogs() const
 {
    if(!l) return 0; //bottom node
    if(l->l || r->l) { //not a nog
-      return (l->nnogs() + r->nnogs()); 
+      return (l->nnogs() + r->nnogs());
    } else { //is a nog
       return 1;
    }
@@ -119,7 +119,7 @@ char tree::ntype() const
 //--------------------
 //get bottom nodes
 //recursion down the tree
-void tree::getbots(npv& bv) 
+void tree::getbots(npv& bv)
 {
    if(l) { //have children
       l->getbots(bv);
@@ -131,7 +131,7 @@ void tree::getbots(npv& bv)
 //--------------------
 //get nog nodes
 //recursion down the tree
-void tree::getnogs(npv& nv) 
+void tree::getnogs(npv& nv)
 {
    if(l) { //have children
       if((l->l) || (r->l)) {  //have grandchildren
@@ -145,7 +145,7 @@ void tree::getnogs(npv& nv)
 //--------------------
 //get all nodes
 //recursion down the tree
-void tree::getnodes(npv& v) 
+void tree::getnodes(npv& v)
 {
    v.push_back(this);
    if(l) {
@@ -167,15 +167,15 @@ bool tree::birth(size_t nid,size_t v, size_t c, double ml, double mr)
 {
    tree_p np = getptr(nid);
    if(np==0) {
-      cout << "error in birth: bottom node not found\n";
+      //cout << "error in birth: bottom node not found\n";
       return false; //did not find note with that nid
    }
    if(np->l) {
-      cout << "error in birth: found node has children\n";
+     // cout << "error in birth: found node has children\n";
       return false; //node is not a bottom node
    }
 
-   //add children to bottom node np 
+   //add children to bottom node np
    tree_p l = new tree;
    l->mu=ml;
    tree_p r = new tree;
@@ -202,11 +202,11 @@ bool tree::isnog() const
 }
 //--------------------
 //kill children of  nog node nid
-bool tree::death(size_t nid, double mu) 
+bool tree::death(size_t nid, double mu)
 {
    tree_p nb = getptr(nid);
    if(nb==0) {
-      cout << "error in death, nid invalid\n";
+      //cout << "error in death, nid invalid\n";
       return false;
    }
    if(nb->isnog()) {
@@ -219,7 +219,7 @@ bool tree::death(size_t nid, double mu)
       nb->mu=mu;
       return true;
    } else {
-      cout << "error in death, node is not a nog node\n";
+      //cout << "error in death, node is not a nog node\n";
       return false;
    }
 }
@@ -239,7 +239,7 @@ void tree::birthp(tree_p np,size_t v, size_t c, double ml, double mr)
 }
 //--------------------
 //kill children of  nog node *nb
-void tree::deathp(tree_p nb, double mu) 
+void tree::deathp(tree_p nb, double mu)
 {
    delete nb->l;
    delete nb->r;
@@ -255,24 +255,24 @@ void tree::deathp(tree_p nb, double mu)
 void tree::pr(bool pc) const
 {
    size_t d = depth();
-   size_t id = nid();
+  // size_t id = nid();
 
-   size_t pid; 
+   size_t pid;
    if(!p) pid=0; //parent of top node
    else pid = p->nid();
 
    string pad(2*d,' ');
    string sp(", ");
-   if(pc && (ntype()=='t')) 
-      cout << "tree size: " << treesize() << endl;
-   //cout << pad << "(id,parent): " << id << sp << pid;
-   cout << pad << "id: " << id;
-   cout << sp << "(v,c): " << v << sp << c;
-   cout << sp << "mu: " << mu; 
-   cout << sp << "type: " << ntype();
-   cout << sp << "depth: " << depth();
+   if(pc && (ntype()=='t'))
+   // cout << "tree size: " << treesize() << endl;
+   // cout << pad << "(id,parent): " << id << sp << pid;
+   // cout << pad << "id: " << id;
+   // cout << sp << "(v,c): " << v << sp << c;
+   // cout << sp << "mu: " << mu;
+   // cout << sp << "type: " << ntype();
+   // cout << sp << "depth: " << depth();
    //cout << sp << "pointer: " << this << endl;
-   cout << endl;
+   // cout << endl;
 
    if(pc) {
       if(l) {
@@ -290,7 +290,7 @@ void tree::cp(tree_p n, tree_cp o)
 //recursion down
 {
    if(n->l) {
-      cout << "cp:error node has children\n";
+      //cout << "cp:error node has children\n";
       return;
    }
 
@@ -321,7 +321,7 @@ void tree::tonull()
          nv[i]->l=0;
          nv[i]->r=0;
       }
-      ts = treesize(); 
+      ts = treesize();
    }
    mu=0.0;
    v=0;c=0;
@@ -443,7 +443,7 @@ tree::tree_p tree::getptr(size_t nid)
    if(l==0) return 0; //no children, did not find it
    tree_p lp = l->getptr(nid);
    if(lp) return lp; //found on left
-   tree_p rp = r->getptr(nid); 
+   tree_p rp = r->getptr(nid);
    if(rp) return rp; //found on right
    return 0; //never found it
 }

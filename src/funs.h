@@ -1,10 +1,11 @@
 #include <cmath>
 #include <iostream>
+
 #include "tree.h"
 #include "info.h"
 #include "rng.h"
 
-using std::cout;
+// using std::cout;
 using std::endl;
 
 //pi and log(2*pi)

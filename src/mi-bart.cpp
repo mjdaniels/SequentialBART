@@ -8,279 +8,278 @@ using namespace Rcpp;
 #include <cmath>
 
 #include "rng.h"
-#include "tree.h"
+//#include "tree.h"
 #include "info.h"
 #include "funs.h"
-#include "bd.h"
+//#include "bd.h"
 
-using std::cout;
-using std::endl;
+//#include "clasinit.h"
 
-//void xitofile(std::ofstream& fnm, xinfo xi)
-//{
-//  fnm << xi.size() << endl;
-//  for(uint i=0;i< xi.size();i++)
-//    {
-//      fnm << xi[i].size() << endl;
-//      for(uint j=0;j<xi[i].size();j++) fnm << xi[i][j] << "  ";
-//      fnm << endl;
-//    }
-//  fnm << endl;
-//}
+// using std::cout;
+// using std::endl;
 
-size_t m;
-double kfac=2.0;
-std::vector<double> x,y;
-std::vector<double> z;
-size_t n,p;
-double nu;
-double lambda;
-int bistart=0;
-int binum=0;
+#include "func_mcmc.h"
+#include "func_initialInput.h"
 
-class init {
-public:
-  xinfo xi;
-  pinfo pi;
-  dinfo di;
-  std::vector<tree> t;
-  std::vector<double> y;
-  std::vector<int> z;
-  //  std::vector<double>  yy;
-  double* allfit; //sum of fit of all trees
-  double* r; //y-(allfit-ftemp) = y-allfit+ftemp
-  double* ftemp; //fit of current tree
-};
+
+
+// class init {
+// public:
+//   xinfo xi;
+//   pinfo pi;
+//   dinfo di;
+//   std::vector<tree> t;
+//   std::vector<double> y;
+//   std::vector<int> z;
+//   //  std::vector<double>  yy;
+//   double* allfit; //sum of fit of all trees
+//   double* r; //y-(allfit-ftemp) = y-allfit+ftemp
+//   double* ftemp; //fit of current tree
+// };
 
 //-----------------------------------------
 // function to get initial data
 //-----------------------------------------
 
-void  init_input(size_t index, init& ip_initial, int* vartype)
-  {
-    std::vector<tree> t(m);
-    ip_initial.t=t;
-    ip_initial.di.x = new double [n*(p-index)];
-    ip_initial.allfit = new double [n];
-   //read in data
-   //read y NOTE: we assume y is already centered at 0.
-   double miny = INFINITY; //use range of y to calibrate prior for bottom node mu's
-   double maxy = -INFINITY;
-   sinfo allys;       //sufficient stats for all of y, use to initialize the bart trees.
-   double ytemp;
-
-   if(index==0)
-     {
-       if(vartype[p-index]==0)
-	 {
-	   cout<<"continuous"<<endl;
-	   for(size_t i=0;i<n;i++)
-	     {
-	       ip_initial.y.push_back(y[i]);
-	     }
-	 }
-       else
-	 {
-	   cout<<"binary"<<endl;
-	   for(size_t i=0;i<n;i++)
-	     {
-	       ip_initial.y.push_back(z[i*binum+p-bistart]);
-	       ip_initial.z.push_back(int(y[i]));
-	     }
-         }
-       cout<<ip_initial.y[0]<<endl;
-	   ip_initial.di.x=&x[0];
-cout<<ip_initial.di.x[0]<<endl;
-     }
-
-   else
-     {
-       if(vartype[p-index]==0)
-	 {
-	   cout<<"continuous"<<endl;
-	   for(size_t i=0;i<n;i++)
-	     {
-	       ip_initial.y.push_back(x[(i+1)*p-index]);
-	       for(size_t j=0;j<p-index;j++)
-		 {
-		   ip_initial.di.x[i*(p-index)+j]=x[i*p+j];
-		 }
-
-	     }
-	 }
-       else
-	 {
-	   cout<<"binary"<<endl;
-	   for(size_t i=0;i<n;i++)
-	     {
-	       ip_initial.z.push_back(int(x[(i+1)*p-index]));
-	       ip_initial.y.push_back(z[i*binum+p-index-bistart]);
-	       for(size_t j=0;j<p-index;j++)
-		 {
-		   ip_initial.di.x[i*(p-index)+j]=x[i*p+j];
-		 }
-	     }
-	 }
-     }
-    cout<<"\ndata import ok"<<endl;
-   for(size_t i=0;i<n;i++) {
-     ytemp=ip_initial.y[i];
-      if(ytemp<miny) miny=ytemp;
-      if(ytemp>maxy) maxy=ytemp;
-      allys.sy += ytemp; // sum of y
-      allys.sy2 += ytemp*ytemp; // sum of y^2
-   }
-   allys.n = n;
-    cout << "\ny read in:\n";
-    cout << "n: " << n << endl;
-   cout << "y first and last:\n";
-   cout << ip_initial.y[0] << ", " << ip_initial.y[n-1] << endl;
-   double ybar = allys.sy/n; //sample mean
-   double shat = sqrt((allys.sy2-n*ybar*ybar)/(n-1)); //sample standard deviation
-   cout << "ybar,shat: " << ybar << ", " << shat <<  endl;
-
-   //read x
-   //the n*p numbers for x are stored as the p for first obs, then p for second, and so on.
-   cout << "\nx read in:\n";
-   cout << "p: " << p << endl;
-   cout << "first row: " <<  ip_initial.di.x[0] << " ...  " << ip_initial.di.x[p-1-index] << endl;
-   cout << "last row: " << ip_initial.di.x[(n-1)*(p-index)] << " ...  " << ip_initial.di.x[n*(p-index)-1] << endl;
-
-   //x cutpoints
-   size_t nc=100; //100 equally spaced cutpoints from min to max.
-   makexinfo(p-index,n,&(ip_initial.di.x[0]),ip_initial.xi,nc,vartype);
-   cout<<ip_initial.di.x[0]<<endl;
-   //dinfo
-   for(size_t i=0;i<n;i++)
-     {
-       ip_initial.allfit[i]=ybar;
-     }
-
-   for(unsigned int i=0;i<m;i++)
-     {
-       ip_initial.t[i].setm(ybar/m); //if you sum the fit over the trees you get the fit.
-     }
-
-
-  //prior and mcmc
-   ip_initial.pi.pbd=1.0; //prob of birth/death move
-   ip_initial.pi.pb=.5; //prob of birth given  birth/death
-
-   ip_initial.pi.alpha=.95; //prior prob a bot node splits is alpha/(1+d)^beta, d is depth of node
-   ip_initial.pi.beta=2.0; //2 for bart means it is harder to build big trees.
-
-   if(vartype[p-index]==0)
-     {
-       ip_initial.pi.tau=(maxy-miny)/(2*kfac*sqrt((double)m));
-       ip_initial.pi.sigma=shat;
-
-       cout << "\nalpha, beta: " << ip_initial.pi.alpha << ", " << ip_initial.pi.beta << endl;
-       cout << "sigma, tau: " << ip_initial.pi.sigma << ", " << ip_initial.pi.tau << endl;
-
-     }
-   else
-     {
-       ip_initial.pi.tau=3.0/(kfac*sqrt((double)m));
-       ip_initial.pi.sigma=1.0;
-     }
-
-    cout<<ip_initial.allfit[n-1]<<endl;
-   ip_initial.di.n=n;
-    cout<<ip_initial.di.n<<endl;
-   ip_initial.di.p=p-index;
-   cout<<ip_initial.di.p<<endl;
-   ip_initial.di.y=ip_initial.r; //the y for each draw will be the residual
-   cout<<ip_initial.r<<endl;
-   ip_initial.di.vartype=vartype;
-
-
-     return;
-   }
+// void  init_input(size_t index, init& ip_initial, int* vartype)
+//   {
+//     std::vector<tree> t(m);
+//     ip_initial.t=t;
+//     ip_initial.di.x = new double [n*(p-index)];
+//     ip_initial.allfit = new double [n];
+//    //read in data
+//    //read y NOTE: we assume y is already centered at 0.
+//    double miny = INFINITY; //use range of y to calibrate prior for bottom node mu's
+//    double maxy = -INFINITY;
+//    sinfo allys;       //sufficient stats for all of y, use to initialize the bart trees.
+//    double ytemp;
+//
+//    if(index==0)
+//      {
+//        if(vartype[p-index]==0)
+// 	 {
+// 	   cout<<"continuous"<<endl;
+// 	   for(size_t i=0;i<n;i++)
+// 	     {
+// 	       ip_initial.y.push_back(y[i]);
+// 	     }
+// 	 }
+//        else
+// 	 {
+// 	   cout<<"binary"<<endl;
+// 	   for(size_t i=0;i<n;i++)
+// 	     {
+// 	       ip_initial.y.push_back(z[i*binum+p-bistart]);
+// 	       ip_initial.z.push_back(int(y[i]));
+// 	     }
+//          }
+//        cout<<ip_initial.y[0]<<endl;
+// 	   ip_initial.di.x=&x[0];
+// cout<<ip_initial.di.x[0]<<endl;
+//      }
+//
+//    else
+//      {
+//        if(vartype[p-index]==0)
+// 	 {
+// 	   cout<<"continuous"<<endl;
+// 	   for(size_t i=0;i<n;i++)
+// 	     {
+// 	       ip_initial.y.push_back(x[(i+1)*p-index]);
+// 	       for(size_t j=0;j<p-index;j++)
+// 		 {
+// 		   ip_initial.di.x[i*(p-index)+j]=x[i*p+j];
+// 		 }
+//
+// 	     }
+// 	 }
+//        else
+// 	 {
+// 	   cout<<"binary"<<endl;
+// 	   for(size_t i=0;i<n;i++)
+// 	     {
+// 	       ip_initial.z.push_back(int(x[(i+1)*p-index]));
+// 	       ip_initial.y.push_back(z[i*binum+p-index-bistart]);
+// 	       for(size_t j=0;j<p-index;j++)
+// 		 {
+// 		   ip_initial.di.x[i*(p-index)+j]=x[i*p+j];
+// 		 }
+// 	     }
+// 	 }
+//      }
+//     cout<<"\ndata import ok"<<endl;
+//    for(size_t i=0;i<n;i++) {
+//      ytemp=ip_initial.y[i];
+//       if(ytemp<miny) miny=ytemp;
+//       if(ytemp>maxy) maxy=ytemp;
+//       allys.sy += ytemp; // sum of y
+//       allys.sy2 += ytemp*ytemp; // sum of y^2
+//    }
+//    allys.n = n;
+//     cout << "\ny read in:\n";
+//     cout << "n: " << n << endl;
+//    cout << "y first and last:\n";
+//    cout << ip_initial.y[0] << ", " << ip_initial.y[n-1] << endl;
+//    double ybar = allys.sy/n; //sample mean
+//    double shat = sqrt((allys.sy2-n*ybar*ybar)/(n-1)); //sample standard deviation
+//    cout << "ybar,shat: " << ybar << ", " << shat <<  endl;
+//
+//    //read x
+//    //the n*p numbers for x are stored as the p for first obs, then p for second, and so on.
+//    cout << "\nx read in:\n";
+//    cout << "p: " << p << endl;
+//    cout << "first row: " <<  ip_initial.di.x[0] << " ...  " << ip_initial.di.x[p-1-index] << endl;
+//    cout << "last row: " << ip_initial.di.x[(n-1)*(p-index)] << " ...  " << ip_initial.di.x[n*(p-index)-1] << endl;
+//
+//    //x cutpoints
+//    size_t nc=100; //100 equally spaced cutpoints from min to max.
+//    makexinfo(p-index,n,&(ip_initial.di.x[0]),ip_initial.xi,nc,vartype);
+//    cout<<ip_initial.di.x[0]<<endl;
+//    //dinfo
+//    for(size_t i=0;i<n;i++)
+//      {
+//        ip_initial.allfit[i]=ybar;
+//      }
+//
+//    for(unsigned int i=0;i<m;i++)
+//      {
+//        ip_initial.t[i].setm(ybar/m); //if you sum the fit over the trees you get the fit.
+//      }
+//
+//
+//   //prior and mcmc
+//    ip_initial.pi.pbd=1.0; //prob of birth/death move
+//    ip_initial.pi.pb=.5; //prob of birth given  birth/death
+//
+//    ip_initial.pi.alpha=.95; //prior prob a bot node splits is alpha/(1+d)^beta, d is depth of node
+//    ip_initial.pi.beta=2.0; //2 for bart means it is harder to build big trees.
+//
+//    if(vartype[p-index]==0)
+//      {
+//        ip_initial.pi.tau=(maxy-miny)/(2*kfac*sqrt((double)m));
+//        ip_initial.pi.sigma=shat;
+//
+//        cout << "\nalpha, beta: " << ip_initial.pi.alpha << ", " << ip_initial.pi.beta << endl;
+//        cout << "sigma, tau: " << ip_initial.pi.sigma << ", " << ip_initial.pi.tau << endl;
+//
+//      }
+//    else
+//      {
+//        ip_initial.pi.tau=3.0/(kfac*sqrt((double)m));
+//        ip_initial.pi.sigma=1.0;
+//      }
+//
+//     cout<<ip_initial.allfit[n-1]<<endl;
+//    ip_initial.di.n=n;
+//     cout<<ip_initial.di.n<<endl;
+//    ip_initial.di.p=p-index;
+//    cout<<ip_initial.di.p<<endl;
+//    ip_initial.di.y=ip_initial.r; //the y for each draw will be the residual
+//    cout<<ip_initial.r<<endl;
+//    ip_initial.di.vartype=vartype;
+//
+//
+//      return;
+//    }
 
 
 //---------------------------------
 // function to get each mcmc run
 //--------------------------------
 
-void mcmc(init& ip_initial, RNG gen,int* vartype)
-{
-  //draw trees
-
-  for(size_t j=0;j<m;j++)
-    {
-
-      fit(ip_initial.t[j],ip_initial.xi,ip_initial.di,ip_initial.ftemp);
-
-      for(size_t k=0;k<n;k++)
-	{
-	  ip_initial.allfit[k] = ip_initial.allfit[k]-ip_initial.ftemp[k];
-	  ip_initial.r[k] = ip_initial.y[k]-ip_initial.allfit[k];
-	}
-      bd(ip_initial.t[j],ip_initial.xi,ip_initial.di,ip_initial.pi,gen);
-
-      drmu(ip_initial.t[j],ip_initial.xi,ip_initial.di,ip_initial.pi,gen);
-
-      fit(ip_initial.t[j],ip_initial.xi,ip_initial.di,ip_initial.ftemp);
-
-      for(size_t k=0;k<n;k++) ip_initial.allfit[k] += ip_initial.ftemp[k];
-    }
-
-
-
-  if(vartype[ip_initial.di.p]==0)
-    {
-      //draw sigma
-      double rss;  //residual sum of squares
-      double restemp; //a residual
-      rss=0.0;
-      for(size_t k=0;k<n;k++)
-	{
-	  restemp=ip_initial.y[k]-ip_initial.allfit[k];
-	  rss += restemp*restemp;
-	}
-      ip_initial.pi.sigma = sqrt((nu*lambda + rss)/gen.chi_square(nu+n));
-    } else
-    {
-      for(size_t k=0;k<n;k++)
-	{ if(ip_initial.z[k]==0)
-	    {
-	      ip_initial.y[k]=0.0;
-	      while(ip_initial.y[k]>=0.0)
-		{
-		  ip_initial.y[k]=gen.normal(ip_initial.allfit[k],1);
-		}
-	    } else
-	    {
-	      ip_initial.y[k]=0.0;
-	      while(ip_initial.y[k]<=0.0)
-		{
-		  ip_initial.y[k]=gen.normal(ip_initial.allfit[k],1);
-		}
-	    }
-	}
-    }
-
-  //  cout<<"pi.sigma"<<ip_initial.pi.sigma<<endl;
-
-  return;
-}
+// void mcmc(init& ip_initial, RNG gen,int* vartype)
+// {
+//   //draw trees
+//
+//   for(size_t j=0;j<m;j++)
+//     {
+//
+//       fit(ip_initial.t[j],ip_initial.xi,ip_initial.di,ip_initial.ftemp);
+//
+//       for(size_t k=0;k<n;k++)
+// 	{
+// 	  ip_initial.allfit[k] = ip_initial.allfit[k]-ip_initial.ftemp[k];
+// 	  ip_initial.r[k] = ip_initial.y[k]-ip_initial.allfit[k];
+// 	}
+//       bd(ip_initial.t[j],ip_initial.xi,ip_initial.di,ip_initial.pi,gen);
+//
+//       drmu(ip_initial.t[j],ip_initial.xi,ip_initial.di,ip_initial.pi,gen);
+//
+//       fit(ip_initial.t[j],ip_initial.xi,ip_initial.di,ip_initial.ftemp);
+//
+//       for(size_t k=0;k<n;k++) ip_initial.allfit[k] += ip_initial.ftemp[k];
+//     }
+//
+//
+//
+//   if(vartype[ip_initial.di.p]==0)
+//     {
+//       //draw sigma
+//       double rss;  //residual sum of squares
+//       double restemp; //a residual
+//       rss=0.0;
+//       for(size_t k=0;k<n;k++)
+// 	{
+// 	  restemp=ip_initial.y[k]-ip_initial.allfit[k];
+// 	  rss += restemp*restemp;
+// 	}
+//       ip_initial.pi.sigma = sqrt((nu*lambda + rss)/gen.chi_square(nu+n));
+//     } else
+//     {
+//       for(size_t k=0;k<n;k++)
+// 	{ if(ip_initial.z[k]==0)
+// 	    {
+// 	      ip_initial.y[k]=0.0;
+// 	      while(ip_initial.y[k]>=0.0)
+// 		{
+// 		  ip_initial.y[k]=gen.normal(ip_initial.allfit[k],1);
+// 		}
+// 	    } else
+// 	    {
+// 	      ip_initial.y[k]=0.0;
+// 	      while(ip_initial.y[k]<=0.0)
+// 		{
+// 		  ip_initial.y[k]=gen.normal(ip_initial.allfit[k],1);
+// 		}
+// 	    }
+// 	}
+//     }
+//
+//   //  cout<<"pi.sigma"<<ip_initial.pi.sigma<<endl;
+//
+//   return;
+// }
 
 //--------------------------------
 // main program
 //--------------------------------
 
-//' Multiply a number by zero
-//' @param x zero single integer.
-//' @export
-//'
+
+
 // [[Rcpp::export]]
 
-int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn,
+NumericVector cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn,
               int new_m, int new_nu, int new_kfac, int  new_nmissing,
               IntegerVector new_xmissroot, int new_bistart, NumericVector new_vartyperoot,
-              NumericVector new_zroot, CharacterVector new_ffname, NumericVector new_lambda, int new_type)
-{
+              NumericVector new_zroot,  NumericVector new_lambda, int new_type)
 
+{
+//CharacterVector new_ffname,
+
+  size_t m;
+  double kfac=2.0;
+  std::vector<double> x,y;
+  std::vector<double> z;
+  size_t n,p;
+  double nu;
+  double lambda;
+  int bistart=0;
+  int binum=0;
+
+    //cout << " last build" <<endl;
+
+
+    NumericVector mymif2;
     uint seed=99; //random number generation
     RNG gen(seed); //this one random number generator is used in all draws
 
@@ -290,13 +289,14 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
     n = y.size();
   if(n<1)
     {
-      cout << "error n<1\n";
+      //cout << "error n<1\n";
       return 1;
+      return mymif2;
     }
-  cout << "\ny read in:\n";
-  cout << "n: " << n << endl;
-  cout << "y first and last:\n";
-  cout << y[0] << ", " << y[n-1] << endl;
+  // cout << "\ny read in:\n";
+  // cout << "n: " << n << endl;
+  // cout << "y first and last:\n";
+  // cout << y[0] << ", " << y[n-1] << endl;
 
   //read x
   x = Rcpp::as< std::vector<double> >(new_xroot); //file to read x from
@@ -304,13 +304,14 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
   p = x.size()/n;
   if(x.size() != n*p)
     {
-      cout << "error: input x file has wrong number of values\n";
-      return 1;
+      //cout << "error: input x file has wrong number of values\n";
+      //return 1;
+      return mymif2;
     }
-  cout << "\nx read in:\n";
-  cout << "p: " << p << endl;
-  cout << "first row: " <<  x[0] << " ...  " << x[p-1] << endl;
-  cout << "last row: " << x[(n-1)*p] << " ...  " << x[n*p-1] << endl;
+  // cout << "\nx read in:\n";
+  // cout << "p: " << p << endl;
+  // cout << "first row: " <<  x[0] << " ...  " << x[p-1] << endl;
+  // cout << "last row: " << x[(n-1)*p] << " ...  " << x[n*p-1] << endl;
 
 
    //optionally read in additional arguments
@@ -347,9 +348,9 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
 //      while(mindf>> mtemp)  ind_missing.push_back(mtemp);
     std::vector<int> ind_missing = Rcpp::as< std::vector<int> >(new_xmissroot);  //file to read missing indicator from
 
-  cout <<"\nburn,nd,number of trees: " << burn << ", " << nd << ", " << m << endl;
-  cout <<"\nlambda,nu,kfac: " << lambda << ", " << nu << ", " << kfac << endl;
-  cout <<"\nnvar:" << nvar<<endl;
+  // cout <<"\nburn,nd,number of trees: " << burn << ", " << nd << ", " << m << endl;
+  // cout <<"\nlambda,nu,kfac: " << lambda << ", " << nu << ", " << kfac << endl;
+  // cout <<"\nnvar:" << nvar<<endl;
 
 //   bistart = atoi(argv[12]);
 
@@ -380,9 +381,9 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
 //   }
    z = Rcpp::as< std::vector<double> >(new_zroot);
 
-    std::string new_ffname_conv = Rcpp::as<std::string>(new_ffname);
-    std::string filename="";
-    filename.append(new_ffname_conv);
+    //std::string new_ffname_conv = Rcpp::as<std::string>(new_ffname);
+    // std::string filename="";
+    // filename.append(new_ffname_conv);
 
  // cout<<filename;
 
@@ -405,7 +406,8 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
   for(size_t i=0;i<nvar+1;i++)
     {
       //cout<<"\n function"<<i+1<<endl;
-      init_input(i,all_initial[i],vartype);
+      //init_input(i,all_initial[i],vartype);
+      init_input(i, all_initial[i], vartype,  m, kfac, bistart, binum, n, p, z, y, x);
       // cout<<all_initial[i].r<<endl;
       // cout<<"first and last ys:\n"<<endl;
       // cout <<all_initial[i].y[0]<<"..."<<all_initial[i].y[n-1]<<endl;
@@ -418,7 +420,7 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
    //storage for ouput
    //missing value
  // std::ofstream mif("mif.txt");//file to save imputed missing value
-  std::ofstream mif(filename.c_str());
+ // std::ofstream mif(filename.c_str());
 //std::ofstream accpt("accpt.txt");//file to save imputed missing value
   //std::ofstream bsdf("/home/dandan/Downloads/test/bart-sd.txt"); //note that we write all burn+nd draws to this file.
 
@@ -437,18 +439,20 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
   std::vector<double> tempx;
   for(size_t i=0;i<=p;i++) tempx.push_back(0.0);
   size_t l=0;
-  cout << "\nMCMC:\n";
-  clock_t tp;
-  tp = clock();
+  //cout << "\nMCMC:\n";
+  // clock_t tp;
+  // tp = clock();
   for(size_t i=0;i<(nd+burn);i++)
     {
-      if(i%100==0) cout << "i: " << i << endl;
+      //if(i%100==0) cout << "i: " << i << endl;
 
       // mcmc used to get updated parameters
       for(size_t j=0;j<nvar+1;j++)
       	{ lambda = (new_lambda[j]);
 	  // cout<<"lamda"<<lambda<<endl;
-      	  mcmc(all_initial[j], gen,vartype);
+      	  // mcmc(all_initial[j], gen,vartype);
+      	  mcmc(all_initial[j], gen,vartype,  m,  n,  lambda, nu);
+
 	  // cout<<"a"<<all_initial[j].y[1]<<"b"<<all_initial[j].allfit[1]<<"C"<<all_initial[j].pi.sigma<<endl;
 	  // bsdf <<all_initial[j].pi.sigma << endl;
       	}
@@ -561,18 +565,20 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
       all_initial[l].allfit[j]=ppredmean[l];
       l++;
   			}
-		       mif<<prop<<endl;
-
+		       //mif<<prop<<endl;
+		       mymif2.push_back(prop);
 		       // cout<<"mif="<<prop<<endl;
 		       //  accpt<<1<<endl;
 
   		    }
   		  else
   		    { if(vartype[p-k]==0) {
-			 mif<<all_initial[k].y[j] <<endl;
-
+			 //mif<<all_initial[k].y[j] <<endl;
+			 mymif2.push_back(all_initial[k].y[j]);
 			 //  cout<<"mif1="<<all_initial[k].y[j]<<endl;
-                      }else{mif<<all_initial[k].z[j] <<endl;
+                      }else{
+                        mymif2.push_back(all_initial[k].z[j]);
+                        //mif<<all_initial[k].z[j] <<endl;
 
 			//	cout<<"mif2="<<all_initial[k].z[j]<<endl;
 		      }
@@ -585,10 +591,10 @@ int cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int 
   	}
 
     }
-  tp=clock()-tp;
-  double thetime = (double)(tp)/(double)(CLOCKS_PER_SEC);
-  cout << "time for loop: " << thetime << endl;
-    cout << "you had type =" << new_type<< endl;
-    cout << "15Jandone"<<endl;
-   return 0;
+  // tp=clock()-tp;
+  // double thetime = (double)(tp)/(double)(CLOCKS_PER_SEC);
+  // cout << "time for loop: " << thetime << endl;
+  //   cout << "you had type =" << new_type<< endl;
+  //   cout << "15Jan"<<endl;
+   return mymif2;
 }
