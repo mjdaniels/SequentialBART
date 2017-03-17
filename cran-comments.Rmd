@@ -1,0 +1,24 @@
+---
+title: "cran-comments"
+author: "Aarti"
+date: "3/14/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Test environments
+* local OS X install, R 3.3.1
+* win-builder (devel)
+
+## R CMD check results
+There were no ERRORs or WARNINGs. 
+
+There was 1 NOTE:
+
+* checking CRAN incoming feasibility ... NOTE
+Maintainer: 'Michael Daniels <mdstat2016@gmail.com>'
+
+New submission
