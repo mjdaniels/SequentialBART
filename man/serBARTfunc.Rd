@@ -34,4 +34,3 @@ Imputed Dataset Values
 \description{
 A flexible Bayesian nonparametric model that is used as imputation tool for missing covariates.
 }
-
