@@ -150,7 +150,6 @@ class RNG
   ulong SHR3()
     {
 
-
     jsr ^= (jsr << 17);
     jsr ^= (jsr >> 13);
     return (jsr = ((jsr ^= (jsr << 5)) & 0xfffffffful));

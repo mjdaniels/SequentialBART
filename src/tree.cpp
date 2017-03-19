@@ -255,7 +255,7 @@ void tree::deathp(tree_p nb, double mu)
 void tree::pr(bool pc) const
 {
    size_t d = depth();
-   size_t id = nid();
+   //size_t id = nid();
 
    size_t pid;
    if(!p) pid=0; //parent of top node
