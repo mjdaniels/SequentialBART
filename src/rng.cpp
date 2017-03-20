@@ -10,11 +10,14 @@
 
 #include <iostream>
 
+ulong RNG::tm = 1234567;
+
+
 //________________________________________________________________________
 // Initialize the static component of RNG
 extern "C"
 {
-ulong RNG::tm = 1234567;
+
 
 //________________________________________________________________________
 // RNG::RNOR generates normal variates with rejection.
