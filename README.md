@@ -26,14 +26,4 @@ Rest of the arguments are standard values for proper imputation. Defaults are pr
 Example
 =======
 
-bartpkg1::seqBARTfunc(xx=xExample, yy=y1Example, datatype=datatypeExample, type=1)
-
-``` r
-# Commenting for now!!
-
-# bartpkg1::serBARTfunc(xx=xExample, yy=y2Example, datatype=datatypeExample, type=2)
-
-# only if the xx is present as a .rda and the pacakge is build once, then the above command works.
-
-# It wont work if the xx was just in the sysdata.rda, while test and check were fine with sysdata.rda only! DONT KNOW WHY> SOME THING TO DO WITH LAZY LOADING as the build shows extra line 'moving datasets to lazyload DB' in the working case > BETTER TO HAVE THE README generted and remove those individual.rda files later so that you dont have to make them available to the user in the data() command.
-```
+bartpkg1::serBARTfunc(xx=xExample, yy=y1Example, datatype=datatypeExample, type=1)
