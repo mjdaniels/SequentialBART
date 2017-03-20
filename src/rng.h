@@ -150,16 +150,16 @@ class RNG
   ulong SHR3()
     {
 
-    jsr ^= (jsr << 17);
-    jsr ^= (jsr >> 13);
-    return (jsr = ((jsr ^= (jsr << 5)) & 0xfffffffful));
+      // jsr ^= (jsr << 17);
+      // jsr ^= (jsr >> 13);
+      // return (jsr = ((jsr ^= (jsr << 5)) & 0xfffffffful));
 
-    // //printf(" this is jsr = %lu\n", jsr);
-    // jsr ^= (jsr << 17);
-    // jsr ^= (jsr >> 13);
-    // jsr ^= (jsr << 5);
-    // jsr = (jsr & 0xfffffffful);
-    //   return jsr;
+      // printf(" this is jsr = %lu\n", jsr);
+      jsr ^= (jsr << 17);
+      jsr ^= (jsr >> 13);
+      jsr ^= (jsr << 5);
+      jsr = (jsr & 0xfffffffful);
+      return jsr;
       }
   ulong CONG()
     {// printf(" this is jcong = %lu\n", jcong);

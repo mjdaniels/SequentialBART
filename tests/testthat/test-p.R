@@ -1,8 +1,13 @@
 context("p")
 
-
 test_that("test that output is of correct type",
-          expect_type(serBARTfunc(xx=xExample, yy=y1Example, datatype=datatypeExample), "list"))
+          { expect_type(serBARTfunc(xx=xExample, yy=y1Example, datatype=datatypeExample, type = 0), "list")
+            expect_type(serBARTfunc(xx=xExample, yy=y1Example, datatype=datatypeExample, type = 1), "list")
+            expect_type(serBARTfunc(xx=xExample, yy=y2Example, datatype=datatypeExample, type = 2), "list")
+          })
+
+# test_that("test that output is of correct type",
+#           expect_type(serBARTfunc(xx=xExample, yy=y1Example, datatype=datatypeExample), "list"))
 
 # test_that("test that the input value are of correct size",
 #           expect_error(serBARTfunc(xx=xx_tooSmall,yy=yy_tooSmall,datatype=datatype), regexp = NULL))

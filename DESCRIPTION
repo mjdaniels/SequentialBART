@@ -1,6 +1,6 @@
 Package: bartpkg1
 Type: Package
-Title: SequentialBART
+Title: Sequential BART for imputation of missing covariates
 Version: 0.1.0
 Author: Michael Daniels
 Maintainer: Michael Daniels <mdstat2016@gmail.com>
