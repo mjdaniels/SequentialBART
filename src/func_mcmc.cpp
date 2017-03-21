@@ -1,29 +1,9 @@
-// //---------------------------------
-// //     ***** RCPP i.e. include<Rcpp.h> was Dropped by me
-// //--------------------------------
-// #include <Rcpp.h>
-// using namespace Rcpp;
 
 #include "func_mcmc.h"
-//#include "rng.h"
-//#include "clasinit.h"
-
-// // This is a simple example of exporting a C++ function to R. You can............
-//
-// //---------------------------------
-// // function to get each mcmc run
-// //--------------------------------
-// //' run the mcmc functionality on data
-// //' @param init object
-// //' @export
-// //'
-// // [[Rcpp::export]]
 
 void mcmc(init& ip_initial, RNG gen,int* vartype, size_t m, size_t n, double lambda, double nu)
-// mcmc signature shoud change here to include all the uknown ( global) values, like m, n, nu, lmabda
 {
 
-  //cout<<"herererererererererererererererererererererererererererererererererererererererererererererer"<<endl;
   for(size_t j=0;j<m;j++)
   {
 
@@ -76,6 +56,4 @@ void mcmc(init& ip_initial, RNG gen,int* vartype, size_t m, size_t n, double lam
   }
 
   return;
-  // cout << "????????????????????????????????????"<<endl;
-  // its not necessarliry returning anything ..like init object, the one it was taking in, but it doesnt return it back! so how does those values are passed back  to the calling function..??
-}
+ }
