@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 ```
 # Description of the package
 
-This program is used for imputing missing covariates by the 'sequential BART' approach. The codes are revised based on the 'parallel BART' code f (though parallel computation of BART was not used).
+This program is used for imputing missing covariates by the 'sequential BART' approach. Package provides a function, serBARTfunc, which computes and returns the imputed values.
 
 # Installation 
 
