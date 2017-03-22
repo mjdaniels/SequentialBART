@@ -4,7 +4,7 @@
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 
-void R_init_bartpkg1(DllInfo* info) {
+void R_init_sbart(DllInfo* info) {
     R_registerRoutines(info, NULL, NULL, NULL, NULL);
     R_useDynamicSymbols(info, TRUE);
 }

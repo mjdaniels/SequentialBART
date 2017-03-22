@@ -7,7 +7,7 @@ using namespace Rcpp;
 
 // cpp_bart_y
 NumericVector cpp_bart_y(NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn, int new_m, int new_nu, int new_kfac, int new_nmissing, IntegerVector new_xmissroot, int new_bistart, NumericVector new_vartyperoot, NumericVector new_zroot, NumericVector new_lambda, int new_type);
-RcppExport SEXP bartpkg1_cpp_bart_y(SEXP new_xrootSEXP, SEXP new_yrootSEXP, SEXP new_ndSEXP, SEXP new_burnSEXP, SEXP new_mSEXP, SEXP new_nuSEXP, SEXP new_kfacSEXP, SEXP new_nmissingSEXP, SEXP new_xmissrootSEXP, SEXP new_bistartSEXP, SEXP new_vartyperootSEXP, SEXP new_zrootSEXP, SEXP new_lambdaSEXP, SEXP new_typeSEXP) {
+RcppExport SEXP sbart_cpp_bart_y(SEXP new_xrootSEXP, SEXP new_yrootSEXP, SEXP new_ndSEXP, SEXP new_burnSEXP, SEXP new_mSEXP, SEXP new_nuSEXP, SEXP new_kfacSEXP, SEXP new_nmissingSEXP, SEXP new_xmissrootSEXP, SEXP new_bistartSEXP, SEXP new_vartyperootSEXP, SEXP new_zrootSEXP, SEXP new_lambdaSEXP, SEXP new_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -31,7 +31,7 @@ END_RCPP
 }
 // cpp_bart_y1
 NumericVector cpp_bart_y1(NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn, int new_m, int new_nu, int new_kfac, int new_nmissing, IntegerVector new_xmissroot, int new_bistart, NumericVector new_vartyperoot, NumericVector new_zroot, NumericVector new_beta, NumericVector new_vroot, NumericVector new_lambda, int new_type);
-RcppExport SEXP bartpkg1_cpp_bart_y1(SEXP new_xrootSEXP, SEXP new_yrootSEXP, SEXP new_ndSEXP, SEXP new_burnSEXP, SEXP new_mSEXP, SEXP new_nuSEXP, SEXP new_kfacSEXP, SEXP new_nmissingSEXP, SEXP new_xmissrootSEXP, SEXP new_bistartSEXP, SEXP new_vartyperootSEXP, SEXP new_zrootSEXP, SEXP new_betaSEXP, SEXP new_vrootSEXP, SEXP new_lambdaSEXP, SEXP new_typeSEXP) {
+RcppExport SEXP sbart_cpp_bart_y1(SEXP new_xrootSEXP, SEXP new_yrootSEXP, SEXP new_ndSEXP, SEXP new_burnSEXP, SEXP new_mSEXP, SEXP new_nuSEXP, SEXP new_kfacSEXP, SEXP new_nmissingSEXP, SEXP new_xmissrootSEXP, SEXP new_bistartSEXP, SEXP new_vartyperootSEXP, SEXP new_zrootSEXP, SEXP new_betaSEXP, SEXP new_vrootSEXP, SEXP new_lambdaSEXP, SEXP new_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -57,7 +57,7 @@ END_RCPP
 }
 // cpp_bart
 NumericVector cpp_bart(NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn, int new_m, int new_nu, int new_kfac, int new_nmissing, IntegerVector new_xmissroot, int new_bistart, NumericVector new_vartyperoot, NumericVector new_zroot, NumericVector new_lambda, int new_type);
-RcppExport SEXP bartpkg1_cpp_bart(SEXP new_xrootSEXP, SEXP new_yrootSEXP, SEXP new_ndSEXP, SEXP new_burnSEXP, SEXP new_mSEXP, SEXP new_nuSEXP, SEXP new_kfacSEXP, SEXP new_nmissingSEXP, SEXP new_xmissrootSEXP, SEXP new_bistartSEXP, SEXP new_vartyperootSEXP, SEXP new_zrootSEXP, SEXP new_lambdaSEXP, SEXP new_typeSEXP) {
+RcppExport SEXP sbart_cpp_bart(SEXP new_xrootSEXP, SEXP new_yrootSEXP, SEXP new_ndSEXP, SEXP new_burnSEXP, SEXP new_mSEXP, SEXP new_nuSEXP, SEXP new_kfacSEXP, SEXP new_nmissingSEXP, SEXP new_xmissrootSEXP, SEXP new_bistartSEXP, SEXP new_vartyperootSEXP, SEXP new_zrootSEXP, SEXP new_lambdaSEXP, SEXP new_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;

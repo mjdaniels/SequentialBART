@@ -1,4 +1,4 @@
-#' Seq BART
+#' Sequential Bayesian Additive Regression Trees Model
 #'
 #' A flexible Bayesian nonparametric model that is used as imputation tool for missing covariates.
 
@@ -21,10 +21,10 @@
 #' @importFrom LaplacesDemon rbern
 #' @importFrom msm rtnorm
 
-#' @useDynLib bartpkg1, .registration = TRUE
+#' @useDynLib sbart, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #'
-serBARTfunc<- function( xx, yy, datatype, type=1, numskip=199,burn=1000, m=200,sigdf=3, sigquant=.90, kfac=2.0)
+seqBART<- function( xx, yy, datatype, type=1, numskip=199,burn=1000, m=200,sigdf=3, sigquant=.90, kfac=2.0)
 {
   set.seed(12345)
 

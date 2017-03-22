@@ -1,6 +1,6 @@
 #Sys.setenv("R_TESTS" = "")
 
 library(testthat)
-library(bartpkg1)
+library(sbart)
 
-test_check("bartpkg1")
+test_check("sbart")
