@@ -8,7 +8,7 @@ This program is used for imputing missing covariates by the 'sequential BART' ap
 Installation
 ============
 
-devtools::install\_github("mjdaniels/SequentialBART")
+devtools::install\_github("mjdaniels/SeqBART2")
 
 Main components of the package
 ==============================
@@ -26,4 +26,4 @@ Rest of the arguments are standard values for proper imputation. Defaults are pr
 Example
 =======
 
-bartpkg1::serBARTfunc(xx=xExample, yy=y1Example, datatype=datatypeExample, type=1)
+sbart::seqBART(xx=Xcovariates, yy=Response, datatype=datatypeValues, type=1)
