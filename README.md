@@ -13,7 +13,7 @@ devtools::install\_github("mjdaniels/SequentialBART")
 Main components of the package
 ==============================
 
-The pacakge provides a function 'SeqBART' to run the sequential BART model to find the missing covariates. The function takes as arguments 1. X, Covariates having the missing values.
+The pacakge provides a function, seqBART(), to run the sequential BART model to find the missing covariates. The function takes as arguments 1. X, Covariates having the missing values.
 
 1.  Y, Response Variable.
 
