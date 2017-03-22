@@ -8,7 +8,7 @@ This program is used for imputing missing covariates by the 'sequential BART' ap
 Installation
 ============
 
-devtools::install\_github("mjdaniels/SeqBART2")
+devtools::install\_github("mjdaniels/SequentialBART")
 
 Main components of the package
 ==============================

@@ -9,7 +9,7 @@ Description: Implements the sequential BART approach to impute the missing covar
      distribution of the covariates and the missingness and applying the Bayesian additive regression trees to model 
      each of these univariate conditionals. Each conditional distribution is then sampled using MCMC algorithm. The published 
      journal can be found at https://academic.oup.com/biostatistics/article/17/3/589/1744410/Sequential-BART-for-imputation-of-missing?searchresult=1
-     Package provides a function, serBART, which computes and returns the imputed values.
+     Package provides a function, seqBART, which computes and returns the imputed values.
 License: MIT + file LICENSE
 LazyData: TRUE
 RoxygenNote: 6.0.1
