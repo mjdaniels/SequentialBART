@@ -2,7 +2,7 @@ Package: sbart
 Type: Package
 Title: Sequential BART for Imputation of Missing Covariates
 Version: 0.1.0
-Author: Michael Daniels
+Author: Dandan Xu, Michael Daniels
 Maintainer: Aarti Singh <mdstat2016@gmail.com>
 Description: Sequential BART is a flexible Bayesian nonparametric approach 
      to impute the missing covariates which involves factoring the joint distribution
