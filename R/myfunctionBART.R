@@ -2,32 +2,29 @@
 #'
 #' A flexible Bayesian nonparametric model that is used as imputation tool for missing covariates.
 
-#' @param xx Dataset of covariate matrix with missing values (NAs).
-#' @param yy Response (fully observed).
-#' @param datatype a vector indicating the type of covariates (0=continuous, 1=binary).
-#' @param type 0=no reponse, 1=continuous response (linear regression used for imputation) and 2=binary response (logistic regression used for imputation)
-#' @param numskip number of iterations skipped
-#' @param burn number of iterations for burn-in
-#' @param m m value
-#' @param sigdf sig df value
-#' @param sigquant sign quant values
-#' @param kfac kd fac value
+#' @param x Dataset of covariate matrix with missing values (NAs).
+#' @param y Response (fully observed).
+#' @param datatype A vector indicating the type of covariates (0=continuous, 1=binary).
+#' @param type 0=no reponse, 1=continuous response (linear regression used for imputation) and 2=binary response (logistic regression used for imputation), default value = 1
+#' @param numimpute Number of Imputed Datasets, default = 5
+#' @param numskip Number of iterations skipped, default = 199
+#' @param burn Number of iterations for burn-in, default value = 1000
 #'
-#' @return Imputed Dataset Values
-#' @export
 #' @importFrom stats glm lm binomial na.omit qnorm vcov qchisq
-
-
 #' @importFrom LaplacesDemon rbern
 #' @importFrom msm rtnorm
-
-#' @useDynLib sbart, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #'
-seqBART<- function( xx, yy, datatype, type=1, numskip=199,burn=1000, m=200,sigdf=3, sigquant=.90, kfac=2.0)
+#' @useDynLib sbart, .registration = TRUE
+#'
+#' @return Imputed Dataset Values named as 'ximpute'.
+#' @export
+
+seqBART<- function(x, y, datatype, type=1, numimpute=5, numskip=199,burn=1000)
 {
   set.seed(12345)
-
+  xx<-x
+  yy<-y
   pp<-ncol(xx)
   n<-nrow(xx)
   summis<-rep(NA,pp)
@@ -143,27 +140,10 @@ seqBART<- function( xx, yy, datatype, type=1, numskip=199,burn=1000, m=200,sigdf
   for (i in 1:numimpute) {
     assign(paste("imputed",i,sep=""),impu(i*numskip))
   }
-   #imputedValues<-NULL
+
    imputedValues<-list(imputed1 <- imputed1,imputed2 <- imputed2,imputed3 <-imputed3,
                 imputed4<- imputed4,imputed5<- imputed5)
 
    return(imputedValues)
 }
 
-# serBart=function(cstem,x,y,nd=1000,burn=500,m=200,sigest=NA, sigdf=3, sigquant=.90,kfac=2.0,
-#                  fname="",nmissing=0,xmiss=NULL,vartype,z,bistart,binum,type=0,beta=NULL,V=NULL)
-# {
-#     cat("***** Running serBart\n\n")
-#
-#     nu = sigdf
-#     sigq = qchisq(1.0-sigquant,nu)
-#     lambda = (sigest*sigest*sigq)/nu
-#
-#     # New Code
-#     if(type==0) mifValues <- cpp_bart(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),lambda, type)
-#     else if(type==1) mifValues <- cpp_bart_y(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),lambda, type)
-#     else if(type==2) mifValues <- cpp_bart_y1(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),beta,t(V),lambda, type)
-#
-#     retlist <- list(mif=mifValues)
-#     return(retlist)
-# }

@@ -4,12 +4,14 @@
 # @param y Response (fully observed).
 # @param nd number of iterations skipped
 # @param burn number of iterations for burn-in
-# @param m m value
+
+# @param m  the number of trees, default = 200
+# @param sigdf sig df value, default = 3
+# @param sigquant sign quant values, default = 0.90
+# @param kfac kd fac value, default = 2.0
+
+
 # @param sigest asdfsdf
-# @param sigdf sig df value
-# @param sigquant sign quant values
-# @param kfac kd fac value
-# @param fname fanme value
 # @param nmissing defualt=0
 # @param xmiss default = Null
 # @param vartype vartpe
@@ -24,14 +26,15 @@
 
 # @export
 
-serBart=function(x,y,nd=1000,burn=500,m=200,sigest=NA, sigdf=3, sigquant=.90,kfac=2.0,
-                 fname="",nmissing=0,xmiss=NULL,vartype,z,bistart,binum,type=0,beta=NULL,V=NULL)
+serBart=function(x,y,nd=1000,burn=500,
+                 sigest=NA,nmissing=0,xmiss=NULL,vartype,z,bistart,binum,type=1,beta=NULL,V=NULL)
 {
   cat("***** Running serBart\n")
 
-  # print("####################")
-  # print(Sys.getenv())
-  # print("####################")
+  m=200
+  sigdf=3
+  sigquant=.90
+  kfac=2.0
 
   nu = sigdf
   sigq = qchisq(1.0-sigquant,nu)
@@ -42,16 +45,9 @@ serBart=function(x,y,nd=1000,burn=500,m=200,sigest=NA, sigdf=3, sigquant=.90,kfa
   else if(type==1) mifValues <- cpp_bart_y(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),lambda, type)
   else if(type==2) mifValues <- cpp_bart_y1(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),beta,t(V),lambda, type)
 
-  #k<<- NULL
   retlist <- list(mif=mifValues)
-  #k <<- list(mif=mifValues)
+
   return(retlist)
 }
 
 
-# #' @importFrom stats glm lm binomial na.omit qnorm vcov qchisq
-# #' @importFrom LaplacesDemon rbern
-# #' @importFrom msm rtnorm
-# #' @importFrom Rcpp sourceCpp
-#
-# #' @useDynLib bartpkg1

@@ -3,17 +3,17 @@
 Description of the package
 ==========================
 
-This program is used for imputing missing covariates by the 'sequential BART' approach. Sequential BART is a flexible Bayesian nonparametric approach to impute the missing covariates which involves factoring the joint distribution of the covariates with missingness into a set of sequential conditionals and applying Bayesian additive regression trees (BART) to model each of these univariate conditionals. Package provides a function, serBARTfunc(), which computes and returns the imputed values.
+This program is used for imputing missing covariates by the 'sequential BART' approach. Sequential BART is a flexible Bayesian nonparametric approach to impute the missing covariates which involves factoring the joint distribution of the covariates with missingness into a set of sequential conditionals and applying Bayesian additive regression trees (BART) to model each of these univariate conditionals. Package provides a function, `serBARTfunc()`, which computes and returns the imputed values.
 
 Installation
 ============
 
-devtools::install\_github("mjdaniels/SequentialBART")
+`devtools::install_github("mjdaniels/SequentialBART")`
 
 Main components of the package
 ==============================
 
-The pacakge provides a function, seqBART(), to run the sequential BART model to find the missing covariates. The function takes as arguments 1. X, Covariates having the missing values.
+The pacakge provides a function, `seqBART()`, to run the sequential BART model to find the missing covariates. The function takes as arguments 1. X, Covariates having the missing values.
 
 1.  Y, Response Variable.
 
@@ -26,4 +26,4 @@ Rest of the arguments are standard arguments for BART. Defaults are provided.
 Example
 =======
 
-sbart::seqBART(xx=Xcovariates, yy=Response, datatype=datatypeValues, type=1)
+`sbart::seqBART(xx=Xcovariates, yy=Response, datatype=datatypeValues, type=1)`

@@ -4,32 +4,32 @@
 \alias{seqBART}
 \title{Sequential Bayesian Additive Regression Trees Model}
 \usage{
-seqBART(xx, yy, datatype, type = 1, numskip = 199, burn = 1000, m = 200,
+seqBART(x, y, datatype, type = 1, numskip = 199, burn = 1000, m = 200,
   sigdf = 3, sigquant = 0.9, kfac = 2)
 }
 \arguments{
-\item{xx}{Dataset of covariate matrix with missing values (NAs).}
+\item{x}{Dataset of covariate matrix with missing values (NAs).}
 
-\item{yy}{Response (fully observed).}
+\item{y}{Response (fully observed).}
 
-\item{datatype}{a vector indicating the type of covariates (0=continuous, 1=binary).}
+\item{datatype}{A vector indicating the type of covariates (0=continuous, 1=binary).}
 
-\item{type}{0=no reponse, 1=continuous response (linear regression used for imputation) and 2=binary response (logistic regression used for imputation)}
+\item{type}{0=no reponse, 1=continuous response (linear regression used for imputation) and 2=binary response (logistic regression used for imputation).}
 
-\item{numskip}{number of iterations skipped}
+\item{numskip}{Number of iterations skipped.}
 
-\item{burn}{number of iterations for burn-in}
+\item{burn}{Number of iterations for burn-in.}
 
-\item{m}{m value}
+\item{m}{m value.}
 
-\item{sigdf}{sig df value}
+\item{sigdf}{sig df value.}
 
-\item{sigquant}{sign quant values}
+\item{sigquant}{sign quant values.}
 
-\item{kfac}{kd fac value}
+\item{kfac}{kd fac value.}
 }
 \value{
-Imputed Dataset Values
+Imputed Dataset Values.
 }
 \description{
 A flexible Bayesian nonparametric model that is used as imputation tool for missing covariates.
