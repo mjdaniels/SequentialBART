@@ -4,8 +4,8 @@
 \alias{seqBART}
 \title{Sequential Bayesian Additive Regression Trees Model}
 \usage{
-seqBART(x, y, datatype, type = 1, numskip = 199, burn = 1000, m = 200,
-  sigdf = 3, sigquant = 0.9, kfac = 2)
+seqBART(x, y, datatype, type = 1, numimpute = 5, numskip = 199,
+  burn = 1000)
 }
 \arguments{
 \item{x}{Dataset of covariate matrix with missing values (NAs).}
@@ -14,22 +14,16 @@ seqBART(x, y, datatype, type = 1, numskip = 199, burn = 1000, m = 200,
 
 \item{datatype}{A vector indicating the type of covariates (0=continuous, 1=binary).}
 
-\item{type}{0=no reponse, 1=continuous response (linear regression used for imputation) and 2=binary response (logistic regression used for imputation).}
+\item{type}{0=no reponse, 1=continuous response (linear regression used for imputation) and 2=binary response (logistic regression used for imputation), default value = 1}
 
-\item{numskip}{Number of iterations skipped.}
+\item{numimpute}{Number of Imputed Datasets, default = 5}
 
-\item{burn}{Number of iterations for burn-in.}
+\item{numskip}{Number of iterations skipped, default = 199}
 
-\item{m}{m value.}
-
-\item{sigdf}{sig df value.}
-
-\item{sigquant}{sign quant values.}
-
-\item{kfac}{kd fac value.}
+\item{burn}{Number of iterations for burn-in, default value = 1000}
 }
 \value{
-Imputed Dataset Values.
+Imputed Dataset Values named as 'ximpute'.
 }
 \description{
 A flexible Bayesian nonparametric model that is used as imputation tool for missing covariates.
