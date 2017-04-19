@@ -53,19 +53,19 @@ NumericVector cpp_bart_y1 (NumericVector new_xroot, NumericVector new_yroot, int
   n = y.size();
   if(n<1)
   {
-    // cout << "error n<1\n";
-    return mymif2;
-    //return 1;
+    //cout << "error n<1\n";
+    throw std::invalid_argument("Invalid Arguments provided for y");
+    //  return mymif2;
   }
 
-  // read x
-  x = Rcpp::as< std::vector<double> >(new_xroot); //file to read x from
+  //read x
+  x = Rcpp::as< std::vector<double> >(new_xroot); // ***aparently x is not a 2d vector.
   p = x.size()/n;
   if(x.size() != n*p)
   {
-    // cout << "error: input x file has wrong number of values\n";
-    return mymif2;
-    // return 1;
+    //cout << "error: input x file has wrong number of values\n";
+    throw std::invalid_argument("Invalid Arguments provided for x");
+    //return mymif2;
   }
 
   size_t nvar = new_nmissing; // # of covariates with missing values

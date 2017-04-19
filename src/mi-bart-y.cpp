@@ -58,7 +58,8 @@ NumericVector cpp_bart_y (NumericVector new_xroot, NumericVector new_yroot, int 
   if(n<1)
   {
     //cout << "error n<1\n";
-    return mymif2;
+    throw std::invalid_argument("Invalid Arguments provided for y");
+    //  return mymif2;
   }
 
   //read x
@@ -67,7 +68,8 @@ NumericVector cpp_bart_y (NumericVector new_xroot, NumericVector new_yroot, int 
   if(x.size() != n*p)
   {
     //cout << "error: input x file has wrong number of values\n";
-    return mymif2;
+    throw std::invalid_argument("Invalid Arguments provided for x");
+    //return mymif2;
   }
 
 
