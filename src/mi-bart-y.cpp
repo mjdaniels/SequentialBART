@@ -34,7 +34,7 @@ using namespace Eigen;
 NumericVector cpp_bart_y (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn,
                           int new_m, int new_nu, int new_kfac, int  new_nmissing,
                           IntegerVector new_xmissroot, int new_bistart, NumericVector new_vartyperoot,
-                          NumericVector new_zroot, NumericVector new_lambda, int new_type)
+                          NumericVector new_zroot, NumericVector new_lambda, int new_seed)
 {
   size_t m;
   double kfac;
@@ -48,7 +48,7 @@ NumericVector cpp_bart_y (NumericVector new_xroot, NumericVector new_yroot, int 
 
   NumericVector mymif2;
 
-  uint seed=99; //random number generation
+  uint seed= new_seed; //random number generation
   RNG gen(seed); //this one random number generator is used in all draws
 
   //read in data

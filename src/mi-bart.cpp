@@ -24,7 +24,7 @@ using namespace Rcpp;
 NumericVector cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn,
                         int new_m, int new_nu, int new_kfac, int  new_nmissing,
                         IntegerVector new_xmissroot, int new_bistart, NumericVector new_vartyperoot,
-                        NumericVector new_zroot,  NumericVector new_lambda, int new_type)
+                        NumericVector new_zroot,  NumericVector new_lambda, int new_seed)
 
 {
   size_t m; //number of trees in BART sum
@@ -39,7 +39,7 @@ NumericVector cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int ne
 
 
   NumericVector mymif2;
-  uint seed=99; //random number generation
+  uint seed=new_seed; //random number generation
   RNG gen(seed); //this one random number generator is used in all draws
 
   //read y

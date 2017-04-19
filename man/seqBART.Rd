@@ -4,23 +4,29 @@
 \alias{seqBART}
 \title{Sequential Bayesian Additive Regression Trees Model}
 \usage{
-seqBART(x, y, datatype, type = 1, numimpute = 5, numskip = 199,
-  burn = 1000)
+seqBART(x, y, x.type, y.type = 1, numimpute = 5, numskip = 199,
+  burn = 1000, sigest = NA, seed_dist = 12345, seed_draws = 99)
 }
 \arguments{
 \item{x}{Dataset of covariate matrix with missing values (NAs).}
 
 \item{y}{Response (fully observed).}
 
-\item{datatype}{A vector indicating the type of covariates (0=continuous, 1=binary).}
+\item{x.type}{A vector indicating the type of covariates (0=continuous, 1=binary).}
 
-\item{type}{0=no reponse, 1=continuous response (linear regression used for imputation) and 2=binary response (logistic regression used for imputation), default value = 1}
+\item{y.type}{0=no reponse, 1=continuous response (linear regression used for imputation) and 2=binary response (logistic regression used for imputation), default value = 1}
 
 \item{numimpute}{Number of Imputed Datasets, default = 5}
 
 \item{numskip}{Number of iterations skipped, default = 199}
 
 \item{burn}{Number of iterations for burn-in, default value = 1000}
+
+\item{sigest}{For continuous variable, an estimate of error variance, sigma^2, used to calibrate an inverse-chi-squared prior used on that parameter. If not supplied, the least-squares estimate is derived instead. See sigquant for more information. Not applicable when variable is binary. Default value is NA.}
+
+\item{seed_dist}{default value is 12345}
+
+\item{seed_draws}{defualt value is 99}
 }
 \value{
 Imputed Dataset Values named as 'ximpute'.

@@ -34,7 +34,8 @@ void init_input(size_t index, init &ip_initial,
      // cout<<"binary"<<endl;
       for(size_t i=0;i<n;i++)
       {
-        ip_initial.y.push_back(z[i*binum+p-bistart]);
+        //ip_initial.y.push_back(z[i*binum+p-bistart]); // Old code that had only 3 types.
+        ip_initial.y.push_back(z[i*binum+binum-1]); // New code that has 5 types.
         ip_initial.z.push_back(int(y[i]));
       }
     }

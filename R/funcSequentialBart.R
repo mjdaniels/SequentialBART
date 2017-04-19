@@ -26,24 +26,27 @@
 
 # @export
 
-serBart=function(x,y,nd=1000,burn=500,
-                 sigest=NA,nmissing=0,xmiss=NULL,vartype,z,bistart,binum,type=1,beta=NULL,V=NULL)
+
+serBart=function(x,y,burn=500,nd=1000, nmissing=0,xmiss=NULL,sigest=NA,vartype,z,
+                 bistart,binum,type=1,beta=NULL,V=NULL, seed = 99)
 {
   cat("***** Running serBart\n")
 
   m=200
-  sigdf=3
-  sigquant=.90
   kfac=2.0
+
+
+  sigquant=.90
+  sigdf=3
 
   nu = sigdf
   sigq = qchisq(1.0-sigquant,nu)
   lambda = (sigest*sigest*sigq)/nu
 
   # New Code
-  if(type==0) mifValues <- cpp_bart(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),lambda, type)
-  else if(type==1) mifValues <- cpp_bart_y(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),lambda, type)
-  else if(type==2) mifValues <- cpp_bart_y1(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),beta,t(V),lambda, type)
+  if(type==0) mifValues <- cpp_bart(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),lambda, seed)
+  else if(type==1) mifValues <- cpp_bart_y(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),lambda, seed)
+  else if(type==2) mifValues <- cpp_bart_y1(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),beta,t(V),lambda, seed)
 
   retlist <- list(mif=mifValues)
 

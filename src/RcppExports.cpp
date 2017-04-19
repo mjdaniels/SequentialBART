@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // cpp_bart_y
-NumericVector cpp_bart_y(NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn, int new_m, int new_nu, int new_kfac, int new_nmissing, IntegerVector new_xmissroot, int new_bistart, NumericVector new_vartyperoot, NumericVector new_zroot, NumericVector new_lambda, int new_type);
-RcppExport SEXP sbart_cpp_bart_y(SEXP new_xrootSEXP, SEXP new_yrootSEXP, SEXP new_ndSEXP, SEXP new_burnSEXP, SEXP new_mSEXP, SEXP new_nuSEXP, SEXP new_kfacSEXP, SEXP new_nmissingSEXP, SEXP new_xmissrootSEXP, SEXP new_bistartSEXP, SEXP new_vartyperootSEXP, SEXP new_zrootSEXP, SEXP new_lambdaSEXP, SEXP new_typeSEXP) {
+NumericVector cpp_bart_y(NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn, int new_m, int new_nu, int new_kfac, int new_nmissing, IntegerVector new_xmissroot, int new_bistart, NumericVector new_vartyperoot, NumericVector new_zroot, NumericVector new_lambda, int new_seed);
+RcppExport SEXP sbart_cpp_bart_y(SEXP new_xrootSEXP, SEXP new_yrootSEXP, SEXP new_ndSEXP, SEXP new_burnSEXP, SEXP new_mSEXP, SEXP new_nuSEXP, SEXP new_kfacSEXP, SEXP new_nmissingSEXP, SEXP new_xmissrootSEXP, SEXP new_bistartSEXP, SEXP new_vartyperootSEXP, SEXP new_zrootSEXP, SEXP new_lambdaSEXP, SEXP new_seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -24,14 +24,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type new_vartyperoot(new_vartyperootSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type new_zroot(new_zrootSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type new_lambda(new_lambdaSEXP);
-    Rcpp::traits::input_parameter< int >::type new_type(new_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_bart_y(new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, new_kfac, new_nmissing, new_xmissroot, new_bistart, new_vartyperoot, new_zroot, new_lambda, new_type));
+    Rcpp::traits::input_parameter< int >::type new_seed(new_seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_bart_y(new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, new_kfac, new_nmissing, new_xmissroot, new_bistart, new_vartyperoot, new_zroot, new_lambda, new_seed));
     return rcpp_result_gen;
 END_RCPP
 }
 // cpp_bart_y1
-NumericVector cpp_bart_y1(NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn, int new_m, int new_nu, int new_kfac, int new_nmissing, IntegerVector new_xmissroot, int new_bistart, NumericVector new_vartyperoot, NumericVector new_zroot, NumericVector new_beta, NumericVector new_vroot, NumericVector new_lambda, int new_type);
-RcppExport SEXP sbart_cpp_bart_y1(SEXP new_xrootSEXP, SEXP new_yrootSEXP, SEXP new_ndSEXP, SEXP new_burnSEXP, SEXP new_mSEXP, SEXP new_nuSEXP, SEXP new_kfacSEXP, SEXP new_nmissingSEXP, SEXP new_xmissrootSEXP, SEXP new_bistartSEXP, SEXP new_vartyperootSEXP, SEXP new_zrootSEXP, SEXP new_betaSEXP, SEXP new_vrootSEXP, SEXP new_lambdaSEXP, SEXP new_typeSEXP) {
+NumericVector cpp_bart_y1(NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn, int new_m, int new_nu, int new_kfac, int new_nmissing, IntegerVector new_xmissroot, int new_bistart, NumericVector new_vartyperoot, NumericVector new_zroot, NumericVector new_beta, NumericVector new_vroot, NumericVector new_lambda, int new_seed);
+RcppExport SEXP sbart_cpp_bart_y1(SEXP new_xrootSEXP, SEXP new_yrootSEXP, SEXP new_ndSEXP, SEXP new_burnSEXP, SEXP new_mSEXP, SEXP new_nuSEXP, SEXP new_kfacSEXP, SEXP new_nmissingSEXP, SEXP new_xmissrootSEXP, SEXP new_bistartSEXP, SEXP new_vartyperootSEXP, SEXP new_zrootSEXP, SEXP new_betaSEXP, SEXP new_vrootSEXP, SEXP new_lambdaSEXP, SEXP new_seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -50,14 +50,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type new_beta(new_betaSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type new_vroot(new_vrootSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type new_lambda(new_lambdaSEXP);
-    Rcpp::traits::input_parameter< int >::type new_type(new_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_bart_y1(new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, new_kfac, new_nmissing, new_xmissroot, new_bistart, new_vartyperoot, new_zroot, new_beta, new_vroot, new_lambda, new_type));
+    Rcpp::traits::input_parameter< int >::type new_seed(new_seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_bart_y1(new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, new_kfac, new_nmissing, new_xmissroot, new_bistart, new_vartyperoot, new_zroot, new_beta, new_vroot, new_lambda, new_seed));
     return rcpp_result_gen;
 END_RCPP
 }
 // cpp_bart
-NumericVector cpp_bart(NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn, int new_m, int new_nu, int new_kfac, int new_nmissing, IntegerVector new_xmissroot, int new_bistart, NumericVector new_vartyperoot, NumericVector new_zroot, NumericVector new_lambda, int new_type);
-RcppExport SEXP sbart_cpp_bart(SEXP new_xrootSEXP, SEXP new_yrootSEXP, SEXP new_ndSEXP, SEXP new_burnSEXP, SEXP new_mSEXP, SEXP new_nuSEXP, SEXP new_kfacSEXP, SEXP new_nmissingSEXP, SEXP new_xmissrootSEXP, SEXP new_bistartSEXP, SEXP new_vartyperootSEXP, SEXP new_zrootSEXP, SEXP new_lambdaSEXP, SEXP new_typeSEXP) {
+NumericVector cpp_bart(NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn, int new_m, int new_nu, int new_kfac, int new_nmissing, IntegerVector new_xmissroot, int new_bistart, NumericVector new_vartyperoot, NumericVector new_zroot, NumericVector new_lambda, int new_seed);
+RcppExport SEXP sbart_cpp_bart(SEXP new_xrootSEXP, SEXP new_yrootSEXP, SEXP new_ndSEXP, SEXP new_burnSEXP, SEXP new_mSEXP, SEXP new_nuSEXP, SEXP new_kfacSEXP, SEXP new_nmissingSEXP, SEXP new_xmissrootSEXP, SEXP new_bistartSEXP, SEXP new_vartyperootSEXP, SEXP new_zrootSEXP, SEXP new_lambdaSEXP, SEXP new_seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -74,8 +74,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type new_vartyperoot(new_vartyperootSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type new_zroot(new_zrootSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type new_lambda(new_lambdaSEXP);
-    Rcpp::traits::input_parameter< int >::type new_type(new_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_bart(new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, new_kfac, new_nmissing, new_xmissroot, new_bistart, new_vartyperoot, new_zroot, new_lambda, new_type));
+    Rcpp::traits::input_parameter< int >::type new_seed(new_seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_bart(new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, new_kfac, new_nmissing, new_xmissroot, new_bistart, new_vartyperoot, new_zroot, new_lambda, new_seed));
     return rcpp_result_gen;
 END_RCPP
 }
