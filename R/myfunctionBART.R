@@ -10,8 +10,8 @@
 #' @param numskip Number of iterations skipped, default = 199
 #' @param burn Number of iterations for burn-in, default value = 1000
 #' @param sigest For continuous variable, an estimate of error variance, sigma^2, used to calibrate an inverse-chi-squared prior used on that parameter. If not supplied, the least-squares estimate is derived instead. See sigquant for more information. Not applicable when variable is binary. Default value is NA.
-#' @param seed_dist default value is 12345
-#' @param seed_draws defualt value is 99
+#' @param seed_dist is the value that will used to generate the distributions with. Default value is 12345
+#' @param seed_draws is the value that will used to generate the draws with. Default value is 99
 #' @importFrom stats glm lm binomial na.omit qnorm vcov qchisq
 #' @importFrom LaplacesDemon rbern
 #' @importFrom msm rtnorm
