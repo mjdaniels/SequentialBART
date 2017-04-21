@@ -39,7 +39,13 @@ NumericVector cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int ne
 
 
   NumericVector mymif2;
-  uint seed=new_seed; //random number generation
+  //uint seed=new_seed; //random number generation
+  uint seed;
+  if(new_seed==0)
+    seed=ulong(time(0));
+  else
+    seed=new_seed;
+
   RNG gen(seed); //this one random number generator is used in all draws
 
   //read y

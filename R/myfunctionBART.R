@@ -10,8 +10,7 @@
 #' @param numskip Number of iterations skipped, default = 199
 #' @param burn Number of iterations for burn-in, default value = 1000
 #' @param sigest For continuous variable, an estimate of error variance, sigma^2, used to calibrate an inverse-chi-squared prior used on that parameter. If not supplied, the least-squares estimate is derived instead. See sigquant for more information. Not applicable when variable is binary. Default value is NA.
-#' @param seed_dist is the value that will used to generate the distributions with. Default value is 12345
-#' @param seed_draws is the value that will used to generate the draws with. Default value is 99
+#' @param seed is the value that will used to generate the distributions and draws with. Default value is NA.
 #' @importFrom stats glm lm binomial na.omit qnorm vcov qchisq
 #' @importFrom LaplacesDemon rbern
 #' @importFrom msm rtnorm
@@ -22,9 +21,28 @@
 #' @return Imputed Dataset Values named as 'ximpute'.
 #' @export
 
-seqBART<- function(x, y, x.type, y.type=1, numimpute=5, numskip=199,burn=1000, sigest=NA, seed_dist=12345, seed_draws=99)
+seqBART<- function(x, y, x.type, y.type=1, numimpute=5, numskip=199,burn=1000, sigest=NA, seed=NA)
 {
-  set.seed(seed_dist)
+
+  #In R, if NA is provided, you simply delete the line of set.seed() because we don't want any seed provided.
+  #In C, if NA is provided, use uint seed=ulong(time(0)); RNG gen(seed);
+  #If the user provides an integer say x,
+  #in R, you use set.see(x),
+  #in C, you use uint seed=x;
+  # So you'll need to add an argument in serBART to pass the seed to C.
+
+  if (is.na(seed))
+  {
+    s = 0
+    #cat("s was not given")
+  }
+else
+  {
+   s = seed
+   #cat( " s was given as = ", s)
+   set.seed(s)
+   }
+
   xx<-x
   yy<-y
   pp<-ncol(xx)
@@ -178,7 +196,7 @@ seqBART<- function(x, y, x.type, y.type=1, numimpute=5, numskip=199,burn=1000, s
 
   ##### run BART
   parfit = serBart(x=X,y,burn=burn, nd=nd,nmissing=nvar-1,xmiss=xmiss, sigest=sighat,vartype=vartype,z=z,
-                  bistart=bistart,binum=binum,type=y.type,beta=beta,V=V, seed = seed_draws)
+                  bistart=bistart,binum=binum,type=y.type,beta=beta,V=V, seed = s)
 
   miff<-parfit$mif
   mif_matrix<-t(matrix(miff,ncol=(burn+nd)))

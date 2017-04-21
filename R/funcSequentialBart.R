@@ -28,7 +28,7 @@
 
 
 serBart=function(x,y,burn=500,nd=1000, nmissing=0,xmiss=NULL,sigest=NA,vartype,z,
-                 bistart,binum,type=1,beta=NULL,V=NULL, seed = 99)
+                 bistart,binum,type=1,beta=NULL,V=NULL, seed)
 {
   cat("***** Running serBart\n")
 

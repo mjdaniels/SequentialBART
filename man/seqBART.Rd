@@ -5,7 +5,7 @@
 \title{Sequential Bayesian Additive Regression Trees Model}
 \usage{
 seqBART(x, y, x.type, y.type = 1, numimpute = 5, numskip = 199,
-  burn = 1000, sigest = NA, seed_dist = 12345, seed_draws = 99)
+  burn = 1000, sigest = NA, seed = NA)
 }
 \arguments{
 \item{x}{Dataset of covariate matrix with missing values (NAs).}
@@ -24,9 +24,7 @@ seqBART(x, y, x.type, y.type = 1, numimpute = 5, numskip = 199,
 
 \item{sigest}{For continuous variable, an estimate of error variance, sigma^2, used to calibrate an inverse-chi-squared prior used on that parameter. If not supplied, the least-squares estimate is derived instead. See sigquant for more information. Not applicable when variable is binary. Default value is NA.}
 
-\item{seed_dist}{is the value that will used to generate the distributions with. Default value is 12345}
-
-\item{seed_draws}{is the value that will used to generate the draws with. Default value is 99}
+\item{seed}{is the value that will used to generate the distributions and draws with. Default value is NA.}
 }
 \value{
 Imputed Dataset Values named as 'ximpute'.
