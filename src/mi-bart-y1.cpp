@@ -48,9 +48,9 @@ NumericVector cpp_bart_y1 (NumericVector new_xroot, NumericVector new_yroot, int
   //uint seed= new_seed;
   uint seed;
   if(new_seed==0)
-    seed=ulong(time(0));
+    seed=ulong(time(0)); // The seed in R was given as= NA
   else
-    seed=new_seed;
+    seed=new_seed; // This seed  was given in R
 
 
   RNG gen(seed); //this one random number generator is used in all draws

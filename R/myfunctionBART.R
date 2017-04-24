@@ -21,7 +21,7 @@
 #' @return Imputed Dataset Values named as 'ximpute'.
 #' @export
 
-seqBART<- function(x, y, x.type, y.type=1, numimpute=5, numskip=199,burn=1000, sigest=NA, seed=NA)
+seqBART<- function(x, x.type, y.type=0, y = NA, numimpute=5, numskip=199,burn=1000, sigest=NA, seed=NA)
 {
 
   #In R, if NA is provided, you simply delete the line of set.seed() because we don't want any seed provided.
@@ -31,16 +31,27 @@ seqBART<- function(x, y, x.type, y.type=1, numimpute=5, numskip=199,burn=1000, s
   #in C, you use uint seed=x;
   # So you'll need to add an argument in serBART to pass the seed to C.
 
+# cat( "datatype is :" , x.type)
+# cat( "type is", y.type)
+# print(y)
+#
+# if (y.type!=0){
+#   if (is.na(y)){
+#    warning(" need to provide y")
+#
+#   }
+# }
+
   if (is.na(seed))
   {
-    s = 0
+    s = 0 # will be passed to the C codes to set the RNG seed value there.
     #cat("s was not given")
   }
 else
   {
    s = seed
    #cat( " s was given as = ", s)
-   set.seed(s)
+   set.seed(s) # will be passed to the C codes to set the RNG seed value there.
    }
 
   xx<-x
@@ -58,7 +69,7 @@ else
   xx_reorder<-xx[,order(summis1)]
   vartype<-x.type[order(summis1)]
 
-##########
+
   if (y.type==1|y.type==2|y.type==3) {
     xx_reorder<-cbind(xx_reorder,yy)
     vartype<-c(vartype,0)
@@ -71,12 +82,6 @@ else
     nvar<-nvar+1
     pp<-pp+1}
 
-############
-  # if (y.type==1|y.type==2) {
-  #   xx_reorder<-cbind(xx_reorder,yy)
-  #   vartype<-c(vartype,0)
-  #   nvar<-nvar+1
-  #   pp<-pp+1}
 
   ## missing data indicator
   xmiss=matrix(rep(0,(nvar)*n),ncol=(nvar))
@@ -99,17 +104,6 @@ else
   bistart<-0
   z<-c(0,0)
 
-  # if (binum>0) {
-  #   bistart<-length(summis[summis==0])
-  #   z<-matrix(NA,nrow=n,ncol=binum)
-  #   for(i in 1:binum){
-  #     bip<-mean(xx_reorder1[,(bistart+i)],na.rm=TRUE)
-  #     xx_reorder1[is.na(xx_reorder1[,(bistart+i)]),(bistart+i)]<-rbern(sum(is.na(xx_reorder1[,(bistart+i)])),bip)
-  #     z[xx_reorder1[,bistart+i]==0,i]<-rtnorm(sum(xx_reorder1[,bistart+i]==0),mean=qnorm(bip),1,lower=-Inf,upper=0)
-  #     z[xx_reorder1[,bistart+i]==1,i]<-rtnorm(sum(xx_reorder1[,bistart+i]==1),mean=qnorm(bip),1,lower=0,upper=Inf)
-  #   }
-  # }
-###########
 
   if (y.type==4) {
     if (binum>1) {
@@ -147,14 +141,6 @@ else
     }
   }
 
-
-
-
-############
-
-
-
-
   X<-matrix(NA,n,pp-1)
   x0=xx_reorder1[,1:pp-1]#in-sample x
   y0=xx_reorder1[,pp]
@@ -168,10 +154,6 @@ else
   for (j in 1:(pp-1)) {
     X[is.na(X[,j]),j]=0
   }
-
-
-
-
 
   if (y.type==0|y.type==3)
     {
@@ -190,7 +172,6 @@ else
     V <- vcov(glm(y~.,data=data1, family=binomial))
   }
 
-  #numimpute<-5
   numskip<-numskip+1
   nd<-numimpute*numskip
 
@@ -222,16 +203,7 @@ else
     return(ximpute)
   }
 
-  # for (i in 1:numimpute) {
-  #   assign(paste("imputed",i,sep=""),impu(i*numskip))
-  #
-  # }
-  #
-  #  imputedValues<-list(imputed1 <- imputed1,imputed2 <- imputed2,imputed3 <-imputed3,
-  #               imputed4<- imputed4,imputed5<- imputed5)
-  #
-  #  return(imputedValues)
-#############
+
   retlist<-NULL
   for (i in 1:numimpute) {
     assign(paste("imputed",i,sep=""),impu(i*numskip))
@@ -240,7 +212,6 @@ else
   names(retlist) <- paste("imputed", 1:numimpute, sep = "")
 
   return(retlist)
-  #############
 
 }
 

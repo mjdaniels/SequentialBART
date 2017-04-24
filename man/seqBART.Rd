@@ -4,17 +4,17 @@
 \alias{seqBART}
 \title{Sequential Bayesian Additive Regression Trees Model}
 \usage{
-seqBART(x, y, x.type, y.type = 1, numimpute = 5, numskip = 199,
+seqBART(x, x.type, y.type = 0, y = NA, numimpute = 5, numskip = 199,
   burn = 1000, sigest = NA, seed = NA)
 }
 \arguments{
 \item{x}{Dataset of covariate matrix with missing values (NAs).}
 
-\item{y}{Response (fully observed).}
-
 \item{x.type}{A vector indicating the type of covariates (0=continuous, 1=binary).}
 
 \item{y.type}{0=no reponse, 1=continuous response (linear regression used for imputation) and 2=binary response (logistic regression used for imputation), default value = 1}
+
+\item{y}{Response (fully observed).}
 
 \item{numimpute}{Number of Imputed Datasets, default = 5}
 
