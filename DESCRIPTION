@@ -18,4 +18,5 @@ Imports: LaplacesDemon,
     msm,
     Rcpp
 LinkingTo: Rcpp
-Suggests: testthat
+Suggests: testthat,
+    MASS

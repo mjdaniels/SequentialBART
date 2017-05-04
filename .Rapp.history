@@ -8,3 +8,4 @@ y01
 y2
 datatype
 type
+load("/Users/as82986/Documents/seqbart2/ex.RData")

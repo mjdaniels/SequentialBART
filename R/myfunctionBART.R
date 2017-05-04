@@ -18,7 +18,33 @@
 #'
 #' @useDynLib sbart, .registration = TRUE
 #'
-#' @return Imputed Dataset Values named as 'ximpute'.
+#' @examples
+#' {
+#' # Prepare the Input Dataset
+#' n=150
+#' p=4
+#' x<-matrix(NA,n,p)
+#' varm1<-matrix(0.8,p,p)
+#' diag(varm1)<-1
+#' library(MASS)
+#' x<-mvrnorm(n,rep(0,p),varm1)
+#' x[x[,3]>0,3]<-1
+#' x[x[,3]<=0,3]<-0
+#'
+#' y<-rowMeans(x)+rnorm(n) # y argument is required for y.type = 1/2/3/4
+#'
+#' for(i in 2:4){
+#'   ran<-runif(n)
+#'   x[ran<0.1,i]=NA
+#' }
+#'
+#' x.type=c(0,0,1,0)
+#' y.type=1
+#' impute<-seqBART(x=x, y=y, x.type=x.type, y.type=y.type) # call the function
+#' }
+#'
+#'
+#' @return Imputed Dataset Values named as 'imputed#'.
 #' @export
 
 seqBART<- function(x, x.type, y.type=0, y = NA, numimpute=5, numskip=199,burn=1000, sigest=NA, seed=NA)
@@ -35,12 +61,13 @@ seqBART<- function(x, x.type, y.type=0, y = NA, numimpute=5, numskip=199,burn=10
 # cat( "type is", y.type)
 # print(y)
 #
-# if (y.type!=0){
-#   if (is.na(y)){
-#    warning(" need to provide y")
-#
-#   }
-# }
+if (y.type!=0){
+  if (is.na(y)){
+    #warning ("need to provide y")
+    stop("No y")
+
+  }
+}
 
   if (is.na(seed))
   {
