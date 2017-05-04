@@ -3,9 +3,9 @@
 #' A flexible Bayesian nonparametric model that is used as imputation tool for missing covariates.
 
 #' @param x Dataset of covariate matrix with missing values (NAs).
-#' @param y Response (fully observed).
 #' @param x.type A vector indicating the type of covariates (0=continuous, 1=binary).
-#' @param y.type 0=no reponse, 1=continuous response (linear regression used for imputation) and 2=binary response (logistic regression used for imputation), default value = 1
+#' @param y.type 0 for no response, 1 for continuous response using linear regression for imputation, 2 for binary response using logistic regression for imputation, 3 for continuous response using BART for imputation, 4 for binary response using BART probit for imputation.
+#' @param y Response (fully observed).  Default is NA ( for type = 0); for other types, data must be provided.
 #' @param numimpute Number of Imputed Datasets, default = 5
 #' @param numskip Number of iterations skipped, default = 199
 #' @param burn Number of iterations for burn-in, default value = 1000
@@ -21,8 +21,9 @@
 #' @examples
 #' {
 #' # Prepare the Input Dataset
-#' n=150
+#' n=10
 #' p=4
+#' set.seed(12345)
 #' x<-matrix(NA,n,p)
 #' varm1<-matrix(0.8,p,p)
 #' diag(varm1)<-1
@@ -40,9 +41,9 @@
 #'
 #' x.type=c(0,0,1,0)
 #' y.type=1
-#' impute<-seqBART(x=x, y=y, x.type=x.type, y.type=y.type) # call the function
-#' }
+#' impute<-seqBART(x=x, y=y, x.type=x.type, y.type=y.type, seed= 12345) # call the function
 #'
+#' }
 #'
 #' @return Imputed Dataset Values named as 'imputed#'.
 #' @export
@@ -64,7 +65,7 @@ seqBART<- function(x, x.type, y.type=0, y = NA, numimpute=5, numskip=199,burn=10
 if (y.type!=0){
   if (is.na(y)){
     #warning ("need to provide y")
-    stop("No y")
+    stop("Please provide the reponse variable 'y'")
 
   }
 }
@@ -209,6 +210,7 @@ else
   miff<-parfit$mif
   mif_matrix<-t(matrix(miff,ncol=(burn+nd)))
   mif_m1<-mif_matrix[(burn+1):(burn+nd),]
+
   xtrans<-y
   for(j in 1:(nvar-1)){
     xtrans<-cbind(xtrans,X[,pp-j])

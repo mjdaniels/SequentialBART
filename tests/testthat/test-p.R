@@ -4,6 +4,8 @@ test_that("test that output is of correct type",
           { expect_type(seqBART(x=xForNoresponseAndContinuousAndBinary, x.type=x.type, y.type = 0), "list")
             expect_type(seqBART(x=xForNoresponseAndContinuousAndBinary, x.type=x.type, y=yContinuous, y.type = 1), "list")
             expect_type(seqBART(x=xForNoresponseAndContinuousAndBinary, x.type=x.type, y=yBinary, y.type = 2), "list")
+            expect_type(seqBART(x=xForNoresponseAndContinuousAndBinary, x.type=x.type, y=yContinuous, y.type = 3), "list")
+            expect_type(seqBART(x=xForNoresponseAndContinuousAndBinary, x.type=x.type, y=yBinary, y.type = 4), "list")
           })
 
 # test_that("test that output is of correct type",

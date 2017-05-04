@@ -12,9 +12,9 @@ seqBART(x, x.type, y.type = 0, y = NA, numimpute = 5, numskip = 199,
 
 \item{x.type}{A vector indicating the type of covariates (0=continuous, 1=binary).}
 
-\item{y.type}{0=no reponse, 1=continuous response (linear regression used for imputation) and 2=binary response (logistic regression used for imputation), default value = 1}
+\item{y.type}{0 for no response, 1 for continuous response using linear regression for imputation, 2 for binary response using logistic regression for imputation, 3 for continuous response using BART for imputation, 4 for binary response using BART probit for imputation.}
 
-\item{y}{Response (fully observed).}
+\item{y}{Response (fully observed).  Default is NA ( for type = 0); for other types, data must be provided.}
 
 \item{numimpute}{Number of Imputed Datasets, default = 5}
 
@@ -35,8 +35,9 @@ A flexible Bayesian nonparametric model that is used as imputation tool for miss
 \examples{
 {
 # Prepare the Input Dataset
-n=150
+n=10
 p=4
+set.seed(12345)
 x<-matrix(NA,n,p)
 varm1<-matrix(0.8,p,p)
 diag(varm1)<-1
@@ -54,8 +55,8 @@ for(i in 2:4){
 
 x.type=c(0,0,1,0)
 y.type=1
-impute<-seqBART(x=x, y=y, x.type=x.type, y.type=y.type) # call the function
-}
+impute<-seqBART(x=x, y=y, x.type=x.type, y.type=y.type, seed= 12345) # call the function
 
+}
 
 }

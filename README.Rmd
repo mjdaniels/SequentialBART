@@ -29,7 +29,7 @@ The pacakge provides a function, `seqBART()`, to run the sequential BART model t
 
 3. x.type, is a vector indicating the type of covariates (0=binary, 1=continuous)
 
-4. y.ype, is the type of response and the inference regression model used for imputation. It can take 5 values: y.type=0 for no response, y.type=1 for continuous response using linear regression for imputation, y.type=2 for binary response using logistic regression for imputation, y.type=3 for continuous response using BART for imputation, y.type=4 for binary response using BART probit for imputation.
+4. y.ype, is the type of response and the inference regression model used for imputation. It can take 5 values: y.type=0 for no response, y.type=1 for continuous response using linear regression for imputation, y.type=2 for binary response using logistic regression for imputation. Latest version `0.1.1` has 2 new values fo y.type: 3 for continuous response using BART for imputation, 4 for binary response using BART probit for imputation.
 
 5. numimpute, is the Number of Imputed Datasets that will be generated. Default is = 5
 
