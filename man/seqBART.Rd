@@ -14,7 +14,7 @@ seqBART(x, x.type, y.type = 0, y = NA, numimpute = 5, numskip = 199,
 
 \item{y.type}{0 for no response, 1 for continuous response using linear regression for imputation, 2 for binary response using logistic regression for imputation, 3 for continuous response using BART for imputation, 4 for binary response using BART probit for imputation.}
 
-\item{y}{Response (fully observed).  Default is NA ( for type = 0); for other types, data must be provided.}
+\item{y}{Response (fully observed).  Default is NA ( which is the case for type = 0); For other types, data must be provided.}
 
 \item{numimpute}{Number of Imputed Datasets, default = 5}
 

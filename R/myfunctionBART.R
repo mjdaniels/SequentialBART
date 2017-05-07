@@ -5,7 +5,7 @@
 #' @param x Dataset of covariate matrix with missing values (NAs).
 #' @param x.type A vector indicating the type of covariates (0=continuous, 1=binary).
 #' @param y.type 0 for no response, 1 for continuous response using linear regression for imputation, 2 for binary response using logistic regression for imputation, 3 for continuous response using BART for imputation, 4 for binary response using BART probit for imputation.
-#' @param y Response (fully observed).  Default is NA ( for type = 0); for other types, data must be provided.
+#' @param y Response (fully observed).  Default is NA ( which is the case for type = 0); For other types, data must be provided.
 #' @param numimpute Number of Imputed Datasets, default = 5
 #' @param numskip Number of iterations skipped, default = 199
 #' @param burn Number of iterations for burn-in, default value = 1000
@@ -62,13 +62,13 @@ seqBART<- function(x, x.type, y.type=0, y = NA, numimpute=5, numskip=199,burn=10
 # cat( "type is", y.type)
 # print(y)
 #
-if (y.type!=0){
-  if (is.na(y)){
-    #warning ("need to provide y")
-    stop("Please provide the reponse variable 'y'")
-
-  }
-}
+# if (y.type!=0){
+#   if (is.na(y)){
+#     #warning ("need to provide y")
+#     stop("Please provide the reponse variable 'y'")
+#
+#   }
+# }
 
   if (is.na(seed))
   {
