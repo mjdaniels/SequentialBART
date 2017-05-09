@@ -13,10 +13,10 @@ Description: Sequential BART is a flexible Bayesian non-parametric approach
 License: MIT + file LICENSE
 LazyData: TRUE
 RoxygenNote: 6.0.1
-Depends: R (>= 2.10)
-Imports: LaplacesDemon,
-    msm,
-    Rcpp
-LinkingTo: Rcpp
+Depends: R (>= 3.0.2)
+Imports: LaplacesDemon (>= 16.0.1),
+    msm (>= 1.6.4),
+    Rcpp (>= 0.12.8)
+LinkingTo: Rcpp (>= 0.12.8)
 Suggests: testthat,
-    MASS
+    MASS (>= 7.3.45)
