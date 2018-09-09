@@ -226,21 +226,17 @@ else
     ximpute<-xx_reorder[,1:(pp-nvar)]
     for(j in 2:(nvar+1)){
       ximpute<-cbind(ximpute,xtrans2[,j-1]+m[pp-nvar-1+j])}
-    if (y.type==1|y.type==2|y.type==3|y.type==4) {
-      ximpute<-ximpute[,-(pp)]}
-    ximpute<-ximpute[,order(order(summis1))]
+    if (y.type==1|y.type==2) {
+      ximpute<-ximpute[,-(pp)]
+    ximpute<-ximpute[,order(order(summis1))]}
+    if (y.type==0) {
+    ximpute<-ximpute[,order(order(summis1))]}
+     if (y.type==3|y.type==4) {
+     ximpute<-ximpute[,c(order(order(summis1)),pp)]}
     return(ximpute)
   }
   
-  ## Change--add imputed y
- if (y.type==3|y.type==4) {
-   # if (sum(xmiss[,1])<0.5) {
-    #  ximpute<-ximpute[,-(pp)]
-   # ximpute<-ximpute[,order(order(summis1))]
-   #}else{
-    ximpute<-ximpute[,c(order(order(summis1)),pp)]}
-    return(ximpute)
-  }
+
 
 
   retlist<-NULL
