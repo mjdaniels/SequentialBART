@@ -235,7 +235,7 @@ else
   ## Change--add imputed y
  if (y.type==3|y.type==4) {
     if (sum(xmiss[,1])<0.5) {
-      ximpute<-ximpute[,-(pp)]}
+      ximpute<-ximpute[,-(pp)]
     ximpute<-ximpute[,order(order(summis1))]
    }else{
     ximpute<-ximpute[,c(order(order(summis1)),pp)]}
