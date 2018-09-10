@@ -48,7 +48,7 @@
 #' @return Imputed Dataset Values named as 'imputed#'.
 #' @export
 
-seqBART<- function(x, x.type, y.type=0, y = NA, numimpute=5, numskip=199,burn=1000, sigest=NA, seed=NA)
+seqBART<- function(x, x.type, y.type=0, y = NA, numimpute=5, numskip=199,burn=1000, sigest=NA, seed=NA, prediction=FALSE)
 {
 
   #In R, if NA is provided, you simply delete the line of set.seed() because we don't want any seed provided.
@@ -232,6 +232,11 @@ else
     return(ximpute)
   }
   
+  if(prediction==TRUE) {
+    predf<-parfit$pred
+    pred_matrix<-t(matrix(predf,ncol=(burn+nd)))
+    pred_m1<-pred_matrix[(burn+1):(burn+nd),]}
+  
 
 
 
@@ -241,7 +246,10 @@ else
     retlist<-c(retlist,list(impu(i*numskip)))
   }
   names(retlist) <- paste("imputed", 1:numimpute, sep = "")
+  if(prediction==TRUE) {retlist<-c(retlist,list(pred_m1))
+      names(retlist) <- c(paste("imputed", 1:numimpute, sep = ""),"prediction")}                             
 
+  
   return(retlist)
 
 }
