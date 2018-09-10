@@ -210,6 +210,10 @@ else
   miff<-parfit$mif
   mif_matrix<-t(matrix(miff,ncol=(burn+nd)))
   mif_m1<-mif_matrix[(burn+1):(burn+nd),]
+  
+  if(y.type==4){
+    pred_m1<-mif_m1[,1:n]
+    mif_m1<-mif_m1[,-(1:n)]}
 
   xtrans<-y
   for(j in 1:(nvar-1)){
@@ -231,11 +235,6 @@ else
     ximpute<-ximpute[,order(order(summis1))]
     return(ximpute)
   }
-  
-  if(prediction==TRUE) {
-    predf<-parfit$pred
-    pred_matrix<-t(matrix(predf,ncol=(burn+nd)))
-    pred_m1<-pred_matrix[(burn+1):(burn+nd),]}
   
 
 
