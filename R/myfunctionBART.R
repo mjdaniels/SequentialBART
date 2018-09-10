@@ -49,7 +49,7 @@
 #' @return Imputed Dataset Values named as 'imputed#'.
 #' @export
 
-seqBART<- function(x, x.type, y.type=0, y = NA, numimpute=5, numskip=199,burn=1000, sigest=NA, seed=NA, prediction=FALSE)
+seqBART<- function(x, x.type, y.type=0, y = NA, numimpute=6, numskip=199,burn=1000, sigest=NA, seed=NA, prediction=FALSE)
 {
 
   #In R, if NA is provided, you simply delete the line of set.seed() because we don't want any seed provided.
