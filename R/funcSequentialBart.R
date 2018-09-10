@@ -44,8 +44,7 @@ serBart=function(x,y,burn=500,nd=1000, nmissing=0,xmiss=NULL,sigest=NA,vartype,z
   lambda = (sigest*sigest*sigq)/nu
 
   # New Code
-  if(type==0|type==3) mifValues <- cpp_bart(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),lambda, seed)
-  else if(type==4) mifValues <- cpp_bart1(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),lambda, seed)
+  if(type==0|type==3|type==4) mifValues <- cpp_bart(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),lambda, seed)
   else if(type==1) mifValues <- cpp_bart_y(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),lambda, seed)
   else if(type==2) mifValues <- cpp_bart_y1(t(x),y,nd,burn,m,nu,kfac,nmissing,t(xmiss),bistart,t(vartype),t(z),beta,t(V),lambda, seed)
 
