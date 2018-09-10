@@ -11,6 +11,7 @@
 #' @param burn Number of iterations for burn-in, default value = 1000
 #' @param sigest For continuous variable, an estimate of error variance, sigma^2, used to calibrate an inverse-chi-squared prior used on that parameter. If not supplied, the least-squares estimate is derived instead. See sigquant for more information. Not applicable when variable is binary. Default value is NA.
 #' @param seed is the value that will used to generate the distributions and draws with. Default value is NA.
+#' @param prediction, default value is FASE.
 #' @importFrom stats glm lm binomial na.omit qnorm vcov qchisq
 #' @importFrom LaplacesDemon rbern
 #' @importFrom msm rtnorm
