@@ -212,10 +212,12 @@ else
   mif_matrix<-t(matrix(miff,ncol=(burn+nd)))
   mif_m1<-mif_matrix[(burn+1):(burn+nd),]
   
-  print(ncol(mif_m1))
   
   if(y.type==4){
-    pred_m1<-mif_m1[,1:n]
+    pred_m1<-pnorm(mif_m1[,1:n])
+    mif_m1<-mif_m1[,-(1:n)]}
+  
+    if(y.type==3){
     mif_m1<-mif_m1[,-(1:n)]}
 
   xtrans<-y
@@ -248,7 +250,7 @@ else
     retlist<-c(retlist,list(impu(i*numskip)))
   }
   names(retlist) <- paste("imputed", 1:numimpute, sep = "")
-  if(prediction==TRUE) {retlist<-c(retlist,list(pred_m1))
+  if(prediction==TRUE&y.type==4) {retlist<-c(retlist,list(pred_m1))
       names(retlist) <- c(paste("imputed", 1:numimpute, sep = ""),"prediction")}                             
 
   
