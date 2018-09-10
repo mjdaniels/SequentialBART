@@ -212,6 +212,8 @@ else
   mif_matrix<-t(matrix(miff,ncol=(burn+nd)))
   mif_m1<-mif_matrix[(burn+1):(burn+nd),]
   
+  print(ncol(mif_m1))
+  
   if(y.type==4){
     pred_m1<-mif_m1[,1:n]
     mif_m1<-mif_m1[,-(1:n)]}
