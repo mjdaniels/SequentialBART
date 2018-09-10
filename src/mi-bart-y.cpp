@@ -30,7 +30,7 @@ using namespace Eigen;
 //--------------------------------
 // main program
 //--------------------------------
-// [[Rcpp::export]]
+ [[Rcpp::export]]
 NumericVector cpp_bart_y (NumericVector new_xroot, NumericVector new_yroot, int new_nd, int new_burn,
                           int new_m, int new_nu, int new_kfac, int  new_nmissing,
                           IntegerVector new_xmissroot, int new_bistart, NumericVector new_vartyperoot,
