@@ -132,7 +132,7 @@ NumericVector cpp_bart (NumericVector new_xroot, NumericVector new_yroot, int ne
       mcmc(all_initial[j], gen,vartype,  m,  n,  lambda, nu);
     }
     
-    if(vartype[p+1]==1){
+    if(vartype[p]==1){
         for(size_t j=0;j<n;j++)
       	{
           mymif2.push_back(all_initial[0].allfit[j]);
