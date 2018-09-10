@@ -13,3 +13,7 @@ cpp_bart <- function(new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, new_
     .Call('sbart_cpp_bart', PACKAGE = 'sbart', new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, new_kfac, new_nmissing, new_xmissroot, new_bistart, new_vartyperoot, new_zroot, new_lambda, new_seed)
 }
 
+cpp_bart1 <- function(new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, new_kfac, new_nmissing, new_xmissroot, new_bistart, new_vartyperoot, new_zroot, new_lambda, new_seed) {
+    .Call('sbart_cpp_bart1', PACKAGE = 'sbart', new_xroot, new_yroot, new_nd, new_burn, new_m, new_nu, new_kfac, new_nmissing, new_xmissroot, new_bistart, new_vartyperoot, new_zroot, new_lambda, new_seed)
+}
+
